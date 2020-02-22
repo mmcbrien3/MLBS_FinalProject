@@ -4,7 +4,8 @@ class Paddle(pg.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        pass
+        self.image = pg.Surface([10, 30])
+        self.rect = self.image.get_rect()
 
     def update(self):
         pass
