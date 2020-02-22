@@ -24,6 +24,8 @@ class Controller(object):
         return event.type == pg.QUIT
 
     def _do_updates(self):
+        [o.update() for o in self.objects_to_render]
+
         [self.window.blit(o.image, (o.rect.x, o.rect.y)) for o in self.objects_to_render]
         pg.display.update()
 
@@ -47,6 +49,7 @@ class Controller(object):
             self.window.fill(self.BACKGROUND_COLOR)
 
             self._do_updates()
+            self.clock.tick(60)
 
         pg.quit()
 
