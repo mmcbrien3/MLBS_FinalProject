@@ -24,15 +24,12 @@ class Paddle(Base_Object):
         pass
 
     def _check_valid_move(self, x_pos, y_pos):
-        print(self.rect.x)
-        print(self.rect.y)
         within_window = self._check_on_boundary(x_pos, y_pos)
         return within_window is None
 
     def _move(self, dx, dy):
         new_x = self.rect.x + dx
         new_y = self.rect.y + dy
-        print("x: {}, y: {}".format(new_x, new_y))
         if self._check_valid_move(new_x, new_y):
             self.rect.x = new_x
             self.rect.y = new_y
@@ -52,5 +49,4 @@ class Paddle(Base_Object):
     def handle_keyboard_input(self, keys):
         for k in keys:
             if k in self.key_to_move_map:
-                print('moving')
                 self.key_to_move_map[k]()
