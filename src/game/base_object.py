@@ -1,4 +1,5 @@
 import pygame as pg
+import numpy as np
 
 class Base_Object(pg.sprite.Sprite):
 
@@ -22,6 +23,19 @@ class Base_Object(pg.sprite.Sprite):
         if y_pos + self.SIZE[1] >= 600:
             return self.BOUNCE_BOTTOM
         return None
+
+    def _calc_bounce_type(self, x_pos, y_pos, other_x_pos, other_y_pos, other_size):
+        tolerance = 10
+        bounces = [self.BOUNCE_LEFT, self.BOUNCE_RIGHT, self.BOUNCE_TOP, self.BOUNCE_BOTTOM]
+        bounce_diffs = [x_pos - (other_x_pos + other_size[0]),
+                        (x_pos + self.SIZE[0]) - other_x_pos,
+                        y_pos - (other_y_pos + other_size[1]),
+                        (y_pos + self.SIZE[1]) - other_y_pos]
+        idx = np.argmin(np.abs(bounce_diffs))
+        if bounce_diffs[idx] < tolerance:
+            return bounces[idx]
+        else:
+            return None
 
     def handle_keyboard_input(self, keys):
         pass

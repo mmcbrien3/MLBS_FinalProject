@@ -12,16 +12,17 @@ class Paddle(Base_Object):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(asset_getter.get_asset(self.IMAGE_NAME)), self.SIZE)
         self.rect = self.image.get_rect()
-        self.rect.x = 100
-        self.rect.y = 100
+        self.rect.x = 200
+        self.rect.y = 200
         self.speed = (3, 3)
+        self.velocity = (0, 0)
         self.key_to_move_map = {pg.K_w: self._move_up,
                                 pg.K_a: self._move_left,
                                 pg.K_s: self._move_down,
                                 pg.K_d: self._move_right}
 
     def update(self):
-        pass
+        self.velocity = (0, 0)
 
     def _check_valid_move(self, x_pos, y_pos):
         within_window = self._check_on_boundary(x_pos, y_pos)
@@ -33,6 +34,7 @@ class Paddle(Base_Object):
         if self._check_valid_move(new_x, new_y):
             self.rect.x = new_x
             self.rect.y = new_y
+            self.velocity = (dx, dy)
 
     def _move_up(self):
         self._move(0, -self.speed[1])

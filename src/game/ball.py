@@ -18,19 +18,28 @@ class Ball(Base_Object):
 
         self.velocity = [random.randint(-5, 5), random.randint(-5, 5)]
 
-    def bounce(self, collider_velocity, type):
+    def bounce(self, collider_velocity, type, other_x, other_y, other_size):
         dx = collider_velocity[0]
         dy = collider_velocity[1]
+        print("BOUNCING: {}".format(type))
         if type == self.BOUNCE_TOP:
+            if other_x is not None:
+                self.rect.y = other_y + other_size[1]
             dx += self.velocity[0]
             dy += -self.velocity[1]
         elif type == self.BOUNCE_BOTTOM:
+            if other_x is not None:
+                self.rect.y = other_y - self.SIZE[1]
             dx += self.velocity[0]
             dy += -self.velocity[1]
         elif type == self.BOUNCE_LEFT:
+            if other_x is not None:
+                self.rect.x = other_x + other_size[0]
             dx += -self.velocity[0]
             dy += self.velocity[1]
         elif type == self.BOUNCE_RIGHT:
+            if other_x is not None:
+                self.rect.x = other_x - self.SIZE[1]
             dx += -self.velocity[0]
             dy += self.velocity[1]
 
@@ -40,6 +49,19 @@ class Ball(Base_Object):
     def update(self):
         bounce_type = self._check_on_boundary(self.rect.x, self.rect.y)
         if bounce_type is not None:
-            self.bounce((0, 0), bounce_type)
+            self.bounce((0, 0), bounce_type, None, None, None)
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
+
+    def check_for_bounces(self, objects):
+        for obj in objects:
+            if self.rect.colliderect(obj.rect):
+                self.bounce(obj.velocity,
+                            self._calc_bounce_type(self.rect.x,
+                                                   self.rect.y,
+                                                   obj.rect.x,
+                                                   obj.rect.y,
+                                                   obj.SIZE),
+                            obj.rect.x,
+                            obj.rect.y,
+                            obj.SIZE)

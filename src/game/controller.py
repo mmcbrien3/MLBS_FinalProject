@@ -1,5 +1,5 @@
 import pygame as pg
-
+from ball import Ball
 
 class Controller(object):
 
@@ -39,6 +39,12 @@ class Controller(object):
         pressed_keys = [k for k in self.ACCEPTABLE_KEYS if keys[k]]
         [o.handle_keyboard_input(pressed_keys) for o in self.objects_to_render]
 
+    def _check_for_collisions(self):
+        balls = [o for o in self.objects_to_render if type(o) is Ball]
+        not_balls = [o for o in self.objects_to_render if type(o) is not Ball]
+
+        [ball.check_for_bounces(not_balls) for ball in balls]
+
     def start_game(self):
         pg.init()
 
@@ -52,6 +58,7 @@ class Controller(object):
                     break
 
             self._handle_key_input(pg.key.get_pressed())
+            self._check_for_collisions()
             self.window.fill(self.BACKGROUND_COLOR)
 
             self._do_updates()
