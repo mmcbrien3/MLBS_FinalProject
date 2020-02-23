@@ -1,7 +1,7 @@
 import pygame as pg
 import asset_getter
 from base_object import Base_Object
-
+import numpy as np
 
 class Paddle(Base_Object):
 
@@ -14,7 +14,10 @@ class Paddle(Base_Object):
         self.rect = self.image.get_rect()
         self.rect.x = 200
         self.rect.y = 200
-        self.speed = (3, 3)
+        self.speed = (0, 0)
+        self.max_speed = 4
+        self.acceleration = 0.3
+        self.deceleration = 0.15
         self.velocity = (0, 0)
         self.key_to_move_map = {pg.K_w: self._move_up,
                                 pg.K_a: self._move_left,
@@ -23,6 +26,7 @@ class Paddle(Base_Object):
 
     def update(self):
         self.velocity = (0, 0)
+        self.speed = [np.max((0, sp - self.deceleration)) for sp in self.speed]
 
     def _check_valid_move(self, x_pos, y_pos):
         within_window = self._check_on_boundary(x_pos, y_pos)
@@ -35,6 +39,7 @@ class Paddle(Base_Object):
             self.rect.x = new_x
             self.rect.y = new_y
             self.velocity = (dx, dy)
+            self.speed = [np.min((sp + self.acceleration, self.max_speed)) for sp in self.speed]
 
     def _move_up(self):
         self._move(0, -self.speed[1])
