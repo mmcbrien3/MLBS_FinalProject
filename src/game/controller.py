@@ -5,7 +5,7 @@ class Controller(object):
 
     BACKGROUND_COLOR = (0, 0, 0)
     CAPTION = "PING"
-    ACCEPTABLE_KEYS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d]
+    ACCEPTABLE_KEYS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_i, pg.K_j, pg.K_k, pg.K_l]
 
     def __init__(self, dimensions=[1000, 600]):
         self.clock = pg.time.Clock()
