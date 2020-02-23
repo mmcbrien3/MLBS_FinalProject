@@ -5,6 +5,7 @@ class Controller(object):
 
     BACKGROUND_COLOR = (0, 0, 0)
     CAPTION = "PING"
+    ACCEPTABLE_KEYS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d]
 
     def __init__(self, dimensions=[1000, 600]):
         self.clock = pg.time.Clock()
@@ -34,6 +35,10 @@ class Controller(object):
         pg.display.set_caption(self.CAPTION)
         pg.display.update()
 
+    def _handle_key_input(self, keys):
+        pressed_keys = [k for k in self.ACCEPTABLE_KEYS if keys[k]]
+        [o.handle_keyboard_input(pressed_keys) for o in self.objects_to_render]
+
     def start_game(self):
         pg.init()
 
@@ -46,6 +51,7 @@ class Controller(object):
                     self.quit_game_flag = True
                     break
 
+            self._handle_key_input(pg.key.get_pressed())
             self.window.fill(self.BACKGROUND_COLOR)
 
             self._do_updates()
