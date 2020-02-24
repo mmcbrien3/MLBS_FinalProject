@@ -1,7 +1,7 @@
 import pygame as pg
 import numpy as np
 
-class Base_Object(pg.sprite.Sprite):
+class BaseObject(pg.sprite.Sprite):
 
     IMAGE_NAME = None
     SIZE = None

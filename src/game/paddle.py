@@ -1,9 +1,9 @@
 import pygame as pg
 import asset_getter
-from base_object import Base_Object
+from base_object import BaseObject
 import numpy as np
 
-class Paddle(Base_Object):
+class Paddle(BaseObject):
 
     IMAGE_NAME = "paddle.png"
     SIZE = (20, 120)

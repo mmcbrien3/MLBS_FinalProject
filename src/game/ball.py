@@ -1,10 +1,10 @@
 import pygame as pg
 import asset_getter
 import random
-from base_object import Base_Object
+from base_object import BaseObject
 import numpy as np
 
-class Ball(Base_Object):
+class Ball(BaseObject):
 
     IMAGE_NAME = "ball.png"
     SIZE = (30, 30)

@@ -1,6 +1,6 @@
 import pygame as pg
 from ball import Ball
-from score_keeper import Score_Keeper
+from score_keeper import ScoreKeeper
 
 class Controller(object):
 
@@ -13,7 +13,7 @@ class Controller(object):
         self.game_objects = []
         self.window = None
         self.dimensions = dimensions
-        self.score_keeper = Score_Keeper()
+        self.score_keeper = ScoreKeeper()
         self.quit_game_flag = False
 
     def add_game_objects(self, *objects: pg.sprite.Sprite):
@@ -73,6 +73,8 @@ class Controller(object):
             self._do_updates()
             self._do_draws()
             self.clock.tick(60)
+
+        print("The winner is {}".format(self.score_keeper.get_winner()))
 
         pg.quit()
 

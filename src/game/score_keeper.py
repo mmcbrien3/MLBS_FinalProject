@@ -1,9 +1,11 @@
 import pygame as pg
 import numpy as np
-class Score_Keeper(object):
+class ScoreKeeper(object):
 
     GOAL_COLOR = (100, 100, 100)
     GOAL_DRAW_WIDTH = 15
+    LEFT_WINNER_DECLARATION = "LEFT"
+    RIGHT_WINNER_DECLARATION = "RIGHT"
 
     def __init__(self):
         pg.font.init()
@@ -14,6 +16,14 @@ class Score_Keeper(object):
         self.max_score = 2
         self.goal_center = 300
         self.goal_size = 300
+
+    def get_winner(self):
+        if self.scores[0] > self.scores[1]:
+            return self.LEFT_WINNER_DECLARATION
+        elif self.scores[0] < self.scores[1]:
+            return self.RIGHT_WINNER_DECLARATION
+        else:
+            return None
 
     def is_max_score_reached(self):
         return np.max(self.scores) >= self.max_score
