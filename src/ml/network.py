@@ -1,38 +1,40 @@
 from layer import Layer
 from scipy.stats import logistic
 
+
 class Network(object):
+
     def __init__(self):
         self.layers = []
 
-    def perceptron_generation(self,input, hiddens, output):
+    def perceptron_generation(self, num_input_neurons, hiddens, num_outputs):
         index = 0
-        prev_neurons = 0
+        num_prev_neurons = 0
         layer = Layer(index)
-        layer.populate(input, prev_neurons)
-        prev_neurons = input
+        layer.populate(num_input_neurons, num_prev_neurons)
+        num_prev_neurons = num_input_neurons
         self.layers.append(layer)
         index += 1
         for h in hiddens:
             layer = Layer(index)
-            layer.populate(h, prev_neurons)
-            prev_neurons = h
+            layer.populate(h, num_prev_neurons)
+            num_prev_neurons = h
             self.layers.append(layer)
             index += 1
         layer = Layer(index)
-        layer.populate(output, prev_neurons)
+        layer.populate(num_outputs, num_prev_neurons)
         self.layers.append(layer)
 
     def get_save(self):
-        datas = {"neurons": [], "weights": []}
+        data = {"neurons": [], "weights": []}
 
         for i in range(len(self.layers)):
-            datas["neurons"].append(len(self.layers[i].neurons))
+            data["neurons"].append(len(self.layers[i].neurons))
             for j in range(len(self.layers[i].neurons)):
                 for k in range(len(self.layers[i].neurons[j].weights)):
-                    datas["weights"].append(self.layers[i].neurons[j].weights[k])
+                    data["weights"].append(self.layers[i].neurons[j].weights[k])
 
-        return datas
+        return data
 
     def set_save(self, save):
         prev_neurons = 0

@@ -1,12 +1,12 @@
-import math, random, copy, os
+import os
 from generations import Generations
 from network import Network
 from genome import Genome
 
 
-historic = 0
+class NeuroEvolutionController(object):
 
-class NeuroEvolutionPlayer(object):
+    NETWORK_LAYERS = (8, (8, 8, 8, 8), 4)
 
     best_ever_file = os.path.join(os.getcwd(), "best_ever_neuroevolution.txt")
     best_per_gen_file = os.path.join(os.getcwd(), "best_per_gen_neuroevolution.txt")
@@ -16,25 +16,30 @@ class NeuroEvolutionPlayer(object):
             os.remove(self.best_ever_file)
         if os.path.isfile(self.best_per_gen_file):
             os.remove(self.best_per_gen_file)
-        try:
-            os.remove(self.best_per_gen_file)
-        except:
-            pass
         self.num_per_gen = 30
+        self.historic = 0
         self.max_gen = 500
         self.cur_gen = 0
-        self.cur_bird = None
+        self.elitism = 0.2
+        self.random_behavior = 0.2
+        self.mutation_rate = 0.1
+        self.mutation_range = 0.5
+        self.low_historic = False
+        self.score_sort = -1
+        self.num_child = 1
         self.best_score_ever = -1
 
-        self.generations = Generations()
+        self.generations = Generations(self.num_per_gen)
 
     def restart(self):
-        self.generations = Generations()
+        self.generations = Generations(self.NETWORK_LAYERS, self.num_per_gen,
+                                       self.num_children, self.elitism,
+                                       self.mutation_rate, self.mutation_range,
+                                       self.score_sort, self.random_behavior)
 
     def increment_gen(self):
         self.save_best_score()
         self.cur_gen = self.cur_gen + 1
-        self.cur_bird = None
 
         networks = []
         print("Creating Gen #%d" % self.cur_gen)
@@ -49,20 +54,14 @@ class NeuroEvolutionPlayer(object):
             nn.set_save(networks[i])
             nns.append(nn)
 
-        if not historic == -1:
-            if len(self.generations.generations) > historic + 1:
-                self.generations.generations = self.generations.generations[len(self.generations.generations) - (historic+1):]
+        if not self.historic == -1:
+            if len(self.generations.generations) > self.historic + 1:
+                self.generations.generations = self.generations.generations[len(self.generations.generations) - (self.historic+1):]
 
         return nns
 
     def network_score(self, network, score):
         self.generations.add_genome(Genome(score, network.get_save()))
-
-    def make_decision(self, stimuli, nn):
-        score = nn.compute(stimuli)
-        if score[0] > 0.5:
-            return "SPACE"
-        return "do nothing"
 
     def save_best_score(self, frame_score = None, count = None):
         if len(self.generations.generations) == 0:
