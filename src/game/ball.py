@@ -2,7 +2,7 @@ import pygame as pg
 import asset_getter
 import random
 from base_object import Base_Object
-
+import numpy as np
 
 class Ball(Base_Object):
 
@@ -13,15 +13,14 @@ class Ball(Base_Object):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(asset_getter.get_asset(self.IMAGE_NAME)), self.SIZE)
         self.rect = self.image.get_rect()
-        self.rect.x = 100
-        self.rect.y = 100
-
+        self.rect.x = 500 - self.SIZE[0]
+        self.rect.y = 300 - self.SIZE[1]
+        self.deceleration = .01
         self.velocity = [random.randint(-5, 5), random.randint(-5, 5)]
 
     def bounce(self, collider_velocity, type, other_x, other_y, other_size):
         dx = collider_velocity[0]
         dy = collider_velocity[1]
-        print("BOUNCING: {}".format(type))
         if type == self.BOUNCE_TOP:
             if other_x is not None:
                 self.rect.y = other_y + other_size[1]
@@ -52,6 +51,7 @@ class Ball(Base_Object):
             self.bounce((0, 0), bounce_type, None, None, None)
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
+        self.velocity = [np.sign(v) * np.max((0, np.abs(v) - self.deceleration)) for v in self.velocity]
 
     def check_for_bounces(self, objects):
         for obj in objects:

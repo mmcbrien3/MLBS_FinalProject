@@ -37,7 +37,6 @@ class Paddle(Base_Object):
             self.speed[0] = 0
         return boundary_check
 
-
     def _check_valid_move(self, x_pos, y_pos):
         within_window = self._check_on_boundary(x_pos, y_pos)
         return within_window is None
@@ -52,19 +51,15 @@ class Paddle(Base_Object):
 
     def _move_up(self):
         self.speed = [self.speed[0], np.max((self.speed[1] - self.acceleration, -self.max_speed))]
-        # self._move(0, self.speed[1])
 
     def _move_down(self):
         self.speed = [self.speed[0], np.min((self.speed[1] + self.acceleration, self.max_speed))]
-        # self._move(0, self.speed[1])
 
     def _move_left(self):
         self.speed = [np.max((self.speed[0] - self.acceleration, -self.max_speed)), self.speed[1]]
-        # self._move(self.speed[0], 0)
 
     def _move_right(self):
         self.speed = [np.min((self.speed[0] + self.acceleration, self.max_speed)), self.speed[1]]
-        # self._move(self.speed[0], 0)
 
     def handle_keyboard_input(self, keys):
         for k in keys:
