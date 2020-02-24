@@ -10,7 +10,7 @@ if __name__ == "__main__":
                                 pg.K_j: paddleTwo._move_left,
                                 pg.K_k: paddleTwo._move_down,
                                 pg.K_l: paddleTwo._move_right}
-    paddleTwo.rect.x = 800
+    paddleTwo.set_starting_position((800, 200))
 
     ball = Ball()
     controller = Controller()

@@ -13,10 +13,13 @@ class Ball(Base_Object):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(asset_getter.get_asset(self.IMAGE_NAME)), self.SIZE)
         self.rect = self.image.get_rect()
-        self.rect.x = 500 - self.SIZE[0]
-        self.rect.y = 300 - self.SIZE[1]
+        self.starting_position = (500 - self.SIZE[0], 300 - self.SIZE[1])
+        self.rect.x = self.starting_position[0]
+        self.rect.y = self.starting_position[1]
         self.deceleration = .01
-        self.velocity = [random.randint(-5, 5), random.randint(-5, 5)]
+
+        initial_velocity = np.random.randint(-8, 8)
+        self.velocity = [0, np.sign(initial_velocity + 0.1) * np.max((3, np.abs(initial_velocity)))]
 
     def bounce(self, collider_velocity, type, other_x, other_y, other_size):
         dx = collider_velocity[0]

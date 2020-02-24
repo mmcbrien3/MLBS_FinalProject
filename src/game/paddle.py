@@ -12,8 +12,9 @@ class Paddle(Base_Object):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(asset_getter.get_asset(self.IMAGE_NAME)), self.SIZE)
         self.rect = self.image.get_rect()
-        self.rect.x = 200
-        self.rect.y = 200
+        self.starting_position = (200, 200)
+        self.rect.x = self.starting_position[0]
+        self.rect.y = self.starting_position[1]
         self.speed = [0, 0]
         self.max_speed = 8
         self.acceleration = 0.3
@@ -27,7 +28,7 @@ class Paddle(Base_Object):
     def update(self):
         self.speed = [np.sign(sp) * np.max((0, np.abs(sp) - self.deceleration)) for sp in self.speed]
         self.velocity = [sp for sp in self.speed]
-        self._move(self.speed[0], self.speed[1])
+        self._move(self.velocity[0], self.velocity[1])
 
     def _check_on_boundary(self, x_pos, y_pos):
         boundary_check = super()._check_on_boundary(x_pos, y_pos)

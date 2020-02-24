@@ -12,6 +12,16 @@ class Base_Object(pg.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
+        self.starting_position = None
+
+    def reset_to_starting_position(self):
+        self.rect.x = self.starting_position[0]
+        self.rect.y = self.starting_position[1]
+        self.velocity = [0, 0]
+
+    def set_starting_position(self, start_pos):
+        self.starting_position = start_pos
+        self.reset_to_starting_position()
 
     def _check_on_boundary(self, x_pos, y_pos):
         if x_pos - 0 <= 0:
