@@ -14,5 +14,5 @@ if __name__ == "__main__":
 
     ball = Ball()
     controller = Controller()
-    controller.add_objects_to_render(paddleOne, paddleTwo, ball)
+    controller.add_game_objects(paddleOne, paddleTwo, ball)
     controller.start_game()

@@ -1,5 +1,6 @@
 import pygame as pg
 from ball import Ball
+from score_keeper import Score_Keeper
 
 class Controller(object):
 
@@ -9,13 +10,17 @@ class Controller(object):
 
     def __init__(self, dimensions=[1000, 600]):
         self.clock = pg.time.Clock()
-        self.objects_to_render = []
+        self.game_objects = []
         self.window = None
         self.dimensions = dimensions
+        self.score_keeper = Score_Keeper()
         self.quit_game_flag = False
 
-    def add_objects_to_render(self, *objects: pg.sprite.Sprite):
-        self.objects_to_render.extend(objects)
+    def add_game_objects(self, *objects: pg.sprite.Sprite):
+        self.game_objects.extend(objects)
+        for o in objects:
+            if type(o) is Ball:
+                self.score_keeper.ball = o
 
     def _should_game_continue(self):
         return not self.quit_game_flag
@@ -25,9 +30,11 @@ class Controller(object):
         return event.type == pg.QUIT
 
     def _do_updates(self):
-        [o.update() for o in self.objects_to_render]
+        [o.update() for o in self.game_objects]
+        if self.score_keeper.check_for_goal():
+            [o.reset_to_starting_position() for o in self.game_objects]
 
-        [self.window.blit(o.image, (o.rect.x, o.rect.y)) for o in self.objects_to_render]
+        [self.window.blit(o.image, (o.rect.x, o.rect.y)) for o in self.game_objects]
         pg.display.update()
 
     def _create_window(self):
@@ -37,11 +44,11 @@ class Controller(object):
 
     def _handle_key_input(self, keys):
         pressed_keys = [k for k in self.ACCEPTABLE_KEYS if keys[k]]
-        [o.handle_keyboard_input(pressed_keys) for o in self.objects_to_render]
+        [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
 
     def _check_for_collisions(self):
-        balls = [o for o in self.objects_to_render if type(o) is Ball]
-        not_balls = [o for o in self.objects_to_render if type(o) is not Ball]
+        balls = [o for o in self.game_objects if type(o) is Ball]
+        not_balls = [o for o in self.game_objects if type(o) is not Ball]
 
         [ball.check_for_bounces(not_balls) for ball in balls]
 
