@@ -34,6 +34,8 @@ class Controller(object):
         if self.score_keeper.check_for_goal():
             [o.reset_to_starting_position() for o in self.game_objects]
 
+    def _do_draws(self):
+        self.score_keeper.draw(self.window)
         [self.window.blit(o.image, (o.rect.x, o.rect.y)) for o in self.game_objects]
         pg.display.update()
 
@@ -69,6 +71,7 @@ class Controller(object):
             self.window.fill(self.BACKGROUND_COLOR)
 
             self._do_updates()
+            self._do_draws()
             self.clock.tick(60)
 
         pg.quit()
