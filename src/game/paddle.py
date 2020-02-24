@@ -14,10 +14,10 @@ class Paddle(Base_Object):
         self.rect = self.image.get_rect()
         self.rect.x = 200
         self.rect.y = 200
-        self.speed = (0, 0)
-        self.max_speed = 4
+        self.speed = [0, 0]
+        self.max_speed = 8
         self.acceleration = 0.3
-        self.deceleration = 0.15
+        self.deceleration = 0.2
         self.velocity = (0, 0)
         self.key_to_move_map = {pg.K_w: self._move_up,
                                 pg.K_a: self._move_left,
@@ -25,8 +25,18 @@ class Paddle(Base_Object):
                                 pg.K_d: self._move_right}
 
     def update(self):
-        self.velocity = (0, 0)
-        self.speed = [np.max((0, sp - self.deceleration)) for sp in self.speed]
+        self.speed = [np.sign(sp) * np.max((0, np.abs(sp) - self.deceleration)) for sp in self.speed]
+        self.velocity = [sp for sp in self.speed]
+        self._move(self.speed[0], self.speed[1])
+
+    def _check_on_boundary(self, x_pos, y_pos):
+        boundary_check = super()._check_on_boundary(x_pos, y_pos)
+        if boundary_check is self.BOUNCE_TOP or boundary_check is self.BOUNCE_BOTTOM:
+            self.speed[1] = 0
+        elif boundary_check is self.BOUNCE_RIGHT or boundary_check is self.BOUNCE_LEFT:
+            self.speed[0] = 0
+        return boundary_check
+
 
     def _check_valid_move(self, x_pos, y_pos):
         within_window = self._check_on_boundary(x_pos, y_pos)
@@ -39,19 +49,22 @@ class Paddle(Base_Object):
             self.rect.x = new_x
             self.rect.y = new_y
             self.velocity = (dx, dy)
-            self.speed = [np.min((sp + self.acceleration, self.max_speed)) for sp in self.speed]
 
     def _move_up(self):
-        self._move(0, -self.speed[1])
+        self.speed = [self.speed[0], np.max((self.speed[1] - self.acceleration, -self.max_speed))]
+        # self._move(0, self.speed[1])
 
     def _move_down(self):
-        self._move(0, self.speed[1])
+        self.speed = [self.speed[0], np.min((self.speed[1] + self.acceleration, self.max_speed))]
+        # self._move(0, self.speed[1])
 
     def _move_left(self):
-        self._move(-self.speed[0], 0)
+        self.speed = [np.max((self.speed[0] - self.acceleration, -self.max_speed)), self.speed[1]]
+        # self._move(self.speed[0], 0)
 
     def _move_right(self):
-        self._move(self.speed[0], 0)
+        self.speed = [np.min((self.speed[0] + self.acceleration, self.max_speed)), self.speed[1]]
+        # self._move(self.speed[0], 0)
 
     def handle_keyboard_input(self, keys):
         for k in keys:
