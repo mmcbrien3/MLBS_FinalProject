@@ -17,7 +17,7 @@ class Paddle(BaseObject):
         self.rect.y = self.starting_position[1]
         self.speed = [0, 0]
         self.max_speed = 10
-        self.acceleration = 0.7
+        self.acceleration = 1
         self.deceleration = 0.15
         self.velocity = (0, 0)
         self.key_to_move_map = {pg.K_w: self._move_up,
