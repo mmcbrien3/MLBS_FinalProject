@@ -15,12 +15,16 @@ class Base_Object(pg.sprite.Sprite):
 
     def _check_on_boundary(self, x_pos, y_pos):
         if x_pos - 0 <= 0:
+            self.rect.x = 1
             return self.BOUNCE_LEFT
         if x_pos + self.SIZE[0] >= 1000:
+            self.rect.x = 1000 - self.SIZE[0] - 1
             return self.BOUNCE_RIGHT
         if y_pos - 0 <= 0:
+            self.rect.y = 1
             return self.BOUNCE_TOP
         if y_pos + self.SIZE[1] >= 600:
+            self.rect.y = 600 - self.SIZE[1] - 1
             return self.BOUNCE_BOTTOM
         return None
 
