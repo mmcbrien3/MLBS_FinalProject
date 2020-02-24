@@ -23,7 +23,7 @@ class Controller(object):
                 self.score_keeper.ball = o
 
     def _should_game_continue(self):
-        return not self.quit_game_flag
+        return not self.score_keeper.is_max_score_reached() and not self.quit_game_flag
 
     @staticmethod
     def _check_for_window_close(event):

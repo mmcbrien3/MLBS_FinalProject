@@ -1,5 +1,5 @@
 import pygame as pg
-
+import numpy as np
 class Score_Keeper(object):
 
     GOAL_COLOR = (100, 100, 100)
@@ -11,9 +11,12 @@ class Score_Keeper(object):
         self.goal_locations = []
         self.ball = None
         self.scores = [0, 0]
-        self.max_score = 5
+        self.max_score = 2
         self.goal_center = 300
         self.goal_size = 300
+
+    def is_max_score_reached(self):
+        return np.max(self.scores) >= self.max_score
 
     def check_for_goal(self):
         ball_within_y_bounds = (self.goal_center - self.goal_size // 2 <=
