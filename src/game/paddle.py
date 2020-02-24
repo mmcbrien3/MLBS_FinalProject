@@ -40,7 +40,13 @@ class Paddle(Base_Object):
 
     def _check_valid_move(self, x_pos, y_pos):
         within_window = self._check_on_boundary(x_pos, y_pos)
-        return within_window is None
+        on_sides = True
+        if self.starting_position[0] < 500:
+            on_sides = x_pos + self.SIZE[0] < 500
+        elif self.starting_position[0] >= 500:
+            on_sides = x_pos >= 500
+
+        return within_window is None and on_sides
 
     def _move(self, dx, dy):
         new_x = self.rect.x + dx
