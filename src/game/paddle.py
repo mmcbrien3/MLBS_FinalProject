@@ -25,6 +25,10 @@ class Paddle(Base_Object):
                                 pg.K_s: self._move_down,
                                 pg.K_d: self._move_right}
 
+    def reset_to_starting_position(self):
+        super().reset_to_starting_position()
+        self.speed = [0, 0]
+
     def update(self):
         self.speed = [np.sign(sp) * np.max((0, np.abs(sp) - self.deceleration)) for sp in self.speed]
         self.velocity = [sp for sp in self.speed]
