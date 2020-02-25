@@ -15,6 +15,12 @@ class Controller(object):
         self.dimensions = dimensions
         self.score_keeper = ScoreKeeper()
         self.quit_game_flag = False
+        self.max_frames = None
+        self.max_score = None
+        self.frame_rate = 60
+        self.frames_expired = 0
+        self.left_computer_player = None
+        self.right_computer_player = None
 
     def add_game_objects(self, *objects: pg.sprite.Sprite):
         self.game_objects.extend(objects)
@@ -22,8 +28,14 @@ class Controller(object):
             if type(o) is Ball:
                 self.score_keeper.ball = o
 
+    def set_max_score(self, score):
+        self.score_keeper.max_score = score
+
     def _should_game_continue(self):
-        return not self.score_keeper.is_max_score_reached() and not self.quit_game_flag
+        return not self.score_keeper.is_max_score_reached() and \
+               not self.quit_game_flag and \
+               (self.max_frames is None or self.max_frames > self.frames_expired)
+
 
     @staticmethod
     def _check_for_window_close(event):
@@ -45,14 +57,45 @@ class Controller(object):
         pg.display.update()
 
     def _handle_key_input(self, keys):
+
         pressed_keys = [k for k in self.ACCEPTABLE_KEYS if keys[k]]
         [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
+
+        if self.left_computer_player is not None:
+            output = self.left_computer_player.compute(self.get_neural_net_stimuli(ScoreKeeper.LEFT_WINNER_DECLARATION))
+            pressed_keys = [self.left_computer_player.convert_output_to_keyboard_input(
+                output, self.score_keeper.LEFT_WINNER_DECLARATION)]
+            [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
+
+        if self.right_computer_player is not None:
+            output = self.right_computer_player.compute(self.get_neural_net_stimuli(ScoreKeeper.RIGHT_WINNER_DECLARATION))
+            pressed_keys = [self.left_computer_player.convert_output_to_keyboard_input(
+                output, self.score_keeper.RIGHT_WINNER_DECLARATION)]
+
+            [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
 
     def _check_for_collisions(self):
         balls = [o for o in self.game_objects if type(o) is Ball]
         not_balls = [o for o in self.game_objects if type(o) is not Ball]
 
         [ball.check_for_bounces(not_balls) for ball in balls]
+
+    def get_winner(self):
+        return self.score_keeper.get_winner()
+
+    def get_neural_net_stimuli(self, side):
+        left_paddle = [o for o in self.game_objects if o.starting_position[0] < 500][0]
+        right_paddle = [o for o in self.game_objects if o.starting_position[0] > 500][0]
+        ball = [o for o in self.game_objects if type(o) is Ball][0]
+        left_paddle_position = (left_paddle.rect.x, left_paddle.rect.y)
+        right_paddle_position = (right_paddle.rect.x, right_paddle.rect.y)
+        ball_position = (ball.rect.x, ball.rect.y)
+        ball_velocity = ball.velocity
+
+        if side == ScoreKeeper.LEFT_WINNER_DECLARATION:
+            return [*left_paddle_position, *right_paddle_position, *ball_position, *ball_velocity]
+        elif side == ScoreKeeper.RIGHT_WINNER_DECLARATION:
+            return [*right_paddle_position, *left_paddle_position, *ball_position, *ball_velocity]
 
     def start_game(self):
         pg.init()
@@ -72,9 +115,11 @@ class Controller(object):
 
             self._do_updates()
             self._do_draws()
-            self.clock.tick(60)
+            if self.frame_rate != -1:
+                pg.time.Clock().tick(self.frame_rate)
+            self.frames_expired += 1
 
-        print("The winner is {}".format(self.score_keeper.get_winner()))
+        print("The winner is {}".format(self.get_winner()))
 
         pg.quit()
 

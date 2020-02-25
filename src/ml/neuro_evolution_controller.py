@@ -18,7 +18,6 @@ class NeuroEvolutionController(object):
             os.remove(self.best_per_gen_file)
         self.num_per_gen = 30
         self.historic = 0
-        self.max_gen = 500
         self.cur_gen = 0
         self.elitism = 0.2
         self.random_behavior = 0.2
@@ -26,10 +25,13 @@ class NeuroEvolutionController(object):
         self.mutation_range = 0.5
         self.low_historic = False
         self.score_sort = -1
-        self.num_child = 1
+        self.num_children = 1
         self.best_score_ever = -1
 
-        self.generations = Generations(self.num_per_gen)
+        self.generations = Generations(self.NETWORK_LAYERS, self.num_per_gen,
+                                       self.num_children, self.elitism,
+                                       self.mutation_rate, self.mutation_range,
+                                       self.score_sort, self.random_behavior)
 
     def restart(self):
         self.generations = Generations(self.NETWORK_LAYERS, self.num_per_gen,

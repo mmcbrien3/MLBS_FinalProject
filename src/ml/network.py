@@ -1,8 +1,12 @@
 from src.ml.layer import Layer
 from scipy.stats import logistic
-
+import numpy as np
+import pygame as pg
 
 class Network(object):
+
+    LEFT_INPUTS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d]
+    RIGHT_INPUTS = [pg.K_i, pg.K_j, pg.K_k, pg.K_l]
 
     def __init__(self):
         self.layers = []
@@ -54,15 +58,15 @@ class Network(object):
 
     def compute(self, inputs):
 
-        for i in range(len(inputs[0])):
+        for i in range(len(inputs)):
             if self.layers[0] and self.layers[0].neurons[i]:
-                self.layers[0].neurons[i].value = inputs[0][i]
+                self.layers[0].neurons[i].value = inputs[i]
 
         prev_layer = self.layers[0]
         for i in range(1, len(self.layers)):
             for j in range(len(self.layers[i].neurons)):
                 sum = 0
-                for k in range(len(prev_layer.neurons)):
+                for k in range(len(prev_layer.neurons)): # TODO: optimize with numpy
                     sum += prev_layer.neurons[k].value * self.layers[i].neurons[j].weights[k]
                 self.layers[i].neurons[j].value = self.activation(sum)
             prev_layer = self.layers[i]
@@ -74,5 +78,17 @@ class Network(object):
 
         return out
 
-    def activation(a):
+    def activation(self, a):
         return logistic.cdf(a)
+
+    def convert_output_to_keyboard_input(self, nn_output, side):
+        if side == "LEFT":
+            return self.LEFT_INPUTS[np.argmax(nn_output)]
+        else:
+            return self.RIGHT_INPUTS[np.argmax(nn_output)]
+
+if __name__ == "__main__":
+    n = Network()
+    d = {}
+    d[n] = 3
+    print(d)
