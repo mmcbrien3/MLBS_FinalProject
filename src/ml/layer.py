@@ -1,4 +1,4 @@
-from neuron import Neuron
+from src.ml.neuron import Neuron
 
 
 class Layer(object):

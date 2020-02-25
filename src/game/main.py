@@ -1,6 +1,6 @@
-from controller import Controller
-from paddle import Paddle
-from ball import Ball
+from src.game.controller import Controller
+from src.game.paddle import Paddle
+from src.game.ball import Ball
 import pygame as pg
 
 if __name__ == "__main__":

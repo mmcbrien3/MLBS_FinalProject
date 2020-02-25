@@ -1,7 +1,7 @@
 import os
-from generations import Generations
-from network import Network
-from genome import Genome
+from src.ml.generations import Generations
+from src.ml.network import Network
+from src.ml.genome import Genome
 
 
 class NeuroEvolutionController(object):

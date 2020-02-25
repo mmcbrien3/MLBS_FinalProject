@@ -1,6 +1,6 @@
 import pygame as pg
-from ball import Ball
-from score_keeper import ScoreKeeper
+from src.game.ball import Ball
+from src.game.score_keeper import ScoreKeeper
 
 class Controller(object):
 

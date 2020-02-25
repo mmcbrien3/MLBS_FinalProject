@@ -1,5 +1,5 @@
-from generation import Generation
-from network import Network
+from src.ml.generation import Generation
+from src.ml.network import Network
 
 
 class Generations(object):

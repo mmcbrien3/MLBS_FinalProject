@@ -1,4 +1,4 @@
-from layer import Layer
+from src.ml.layer import Layer
 from scipy.stats import logistic
 
 

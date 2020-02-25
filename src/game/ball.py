@@ -1,7 +1,6 @@
 import pygame as pg
-import asset_getter
-import random
-from base_object import BaseObject
+import src.game.asset_getter as asset_getter
+from src.game.base_object import BaseObject
 import numpy as np
 
 class Ball(BaseObject):

@@ -1,6 +1,6 @@
 import random
 import copy
-from neuron import Neuron
+from src.ml.neuron import Neuron
 
 
 class Generation(object):

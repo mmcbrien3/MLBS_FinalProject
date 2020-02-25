@@ -1,5 +1,7 @@
 import pygame as pg
 import numpy as np
+
+
 class ScoreKeeper(object):
 
     GOAL_COLOR = (100, 100, 100)

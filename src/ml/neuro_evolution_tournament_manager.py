@@ -1,4 +1,4 @@
-from neuro_evolution_controller import NeuroEvolutionController
+from src.ml.neuro_evolution_controller import NeuroEvolutionController
 import pygame as pg
 import numpy as np
 
