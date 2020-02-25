@@ -9,7 +9,6 @@ class Controller(object):
     ACCEPTABLE_KEYS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_i, pg.K_j, pg.K_k, pg.K_l]
 
     def __init__(self, dimensions=[1000, 600]):
-        self.clock = pg.time.Clock()
         self.game_objects = []
         self.window = None
         self.dimensions = dimensions
@@ -47,6 +46,7 @@ class Controller(object):
             [o.reset_to_starting_position() for o in self.game_objects]
 
     def _do_draws(self):
+        self.window.fill(self.BACKGROUND_COLOR)
         self.score_keeper.draw(self.window)
         [self.window.blit(o.image, (o.rect.x, o.rect.y)) for o in self.game_objects]
         pg.display.update()
@@ -58,7 +58,7 @@ class Controller(object):
 
     def _handle_key_input(self, keys):
 
-        pressed_keys = [k for k in self.ACCEPTABLE_KEYS if keys[k]]
+        pressed_keys = [k for k in self.ACCEPTABLE_KEYS if k < len(keys) and keys[k]]
         [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
 
         if self.left_computer_player is not None:
@@ -97,29 +97,38 @@ class Controller(object):
         elif side == ScoreKeeper.RIGHT_WINNER_DECLARATION:
             return [*right_paddle_position, *left_paddle_position, *ball_position, *ball_velocity]
 
-    def start_game(self):
-        pg.init()
+    def _should_draw(self):
+        return self.left_computer_player is None and self.right_computer_player is None
 
-        self._create_window()
+    def start_game(self):
+        if self._should_draw():
+            pg.init()
+            self._create_window()
 
         while self._should_game_continue():
+            if self._should_draw():
+                for event in pg.event.get():
+                    if self._check_for_window_close(event):
+                        self.quit_game_flag = True
+                        break
 
-            for event in pg.event.get():
-                if self._check_for_window_close(event):
-                    self.quit_game_flag = True
-                    break
-
-            self._handle_key_input(pg.key.get_pressed())
+            keys = []
+            if self._should_draw():
+                keys = pg.key.get_pressed()
+            self._handle_key_input(keys)
             self._check_for_collisions()
-            self.window.fill(self.BACKGROUND_COLOR)
 
             self._do_updates()
-            self._do_draws()
-            if self.frame_rate != -1:
-                pg.time.Clock().tick(self.frame_rate)
+            if self._should_draw():
+                self._do_draws()
+            if self._should_draw():
+                pg.time.Clock().tick(60)
             self.frames_expired += 1
+            if self.frames_expired % 60 == 0:
+                print(self.frames_expired)
 
         print("The winner is {}".format(self.get_winner()))
 
-        pg.quit()
+        if self._should_draw():
+            pg.quit()
 

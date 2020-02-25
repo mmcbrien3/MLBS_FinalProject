@@ -69,6 +69,7 @@ class Generation(object):
 
     def calc_percentiles(self):
         tot_score = sum([g.score for g in self.genomes])
+        tot_score = 0.1 if tot_score == 0 else tot_score
         percentiles = []
         tot_percentile = 0
         for g in self.genomes:

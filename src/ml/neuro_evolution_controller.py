@@ -16,7 +16,7 @@ class NeuroEvolutionController(object):
             os.remove(self.best_ever_file)
         if os.path.isfile(self.best_per_gen_file):
             os.remove(self.best_per_gen_file)
-        self.num_per_gen = 30
+        self.num_per_gen = 3
         self.historic = 0
         self.cur_gen = 0
         self.elitism = 0.2

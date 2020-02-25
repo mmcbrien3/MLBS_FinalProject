@@ -13,7 +13,7 @@ class Match(object):
         self.right_neural_net = None
         self.winner = None
         self.game_controller = Controller()
-        self.game_controller.frame_rate = -1
+        self.game_controller.frame_rate = 600
         self._set_up_controller()
 
     def _set_up_controller(self):
