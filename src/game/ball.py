@@ -25,7 +25,7 @@ class Ball(BaseObject):
 
     def _make_random_starting_velocity(self):
         initial_velocity = np.random.randint(-8, 8)
-        return [0, np.sign(initial_velocity + 0.1) * np.max((3, np.abs(initial_velocity)))]
+        return [np.random.choice([-3, 3]), np.sign(initial_velocity + 0.1) * np.max((3, np.abs(initial_velocity)))]
 
     def bounce(self, collider_velocity, type, other_x, other_y, other_size):
         dx = 1.2 * collider_velocity[0]
