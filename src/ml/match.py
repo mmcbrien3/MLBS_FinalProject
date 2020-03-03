@@ -5,7 +5,7 @@ import pygame as pg
 
 class Match(object):
 
-    MAX_FRAMES_IN_GAME = 60 * 10
+    MAX_FRAMES_IN_GAME = 30 * 10
     MAX_SCORE = 3
 
     def __init__(self):
@@ -13,7 +13,7 @@ class Match(object):
         self.right_neural_net = None
         self.winner = None
         self.game_controller = Controller()
-        self.game_controller.frame_rate = 600
+        self.game_controller.frame_rate = 9999
         self._set_up_controller()
 
     def _set_up_controller(self):
@@ -39,5 +39,5 @@ class Match(object):
     def execute_match(self):
         self.game_controller.start_game()
 
-    def get_winner(self):
-        return self.game_controller.get_winner()
+    def get_performances(self):
+        return self.game_controller.get_performances()

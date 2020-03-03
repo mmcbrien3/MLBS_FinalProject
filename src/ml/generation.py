@@ -1,7 +1,7 @@
 import random
 import copy
 from src.ml.neuron import Neuron
-
+import numpy as np
 
 class Generation(object):
 
@@ -94,3 +94,5 @@ class Generation(object):
                 return [p1, p2]
             prev_perc = perc
             count += 1
+
+        return [np.random.choice(self.genomes), np.random.choice(self.genomes)]

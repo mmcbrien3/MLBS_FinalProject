@@ -1,4 +1,5 @@
 import os
+import pickle
 from src.ml.generations import Generations
 from src.ml.network import Network
 from src.ml.genome import Genome
@@ -10,13 +11,14 @@ class NeuroEvolutionController(object):
 
     best_ever_file = os.path.join(os.getcwd(), "best_ever_neuroevolution.txt")
     best_per_gen_file = os.path.join(os.getcwd(), "best_per_gen_neuroevolution.txt")
+    best_per_gen_pickle_folder = os.path.join(os.getcwd(), "neural_nets")
 
     def __init__(self):
         if os.path.isfile(self.best_ever_file):
             os.remove(self.best_ever_file)
         if os.path.isfile(self.best_per_gen_file):
             os.remove(self.best_per_gen_file)
-        self.num_per_gen = 3
+        self.num_per_gen = 4
         self.historic = 0
         self.cur_gen = 0
         self.elitism = 0.2
@@ -82,6 +84,9 @@ class NeuroEvolutionController(object):
         fhandler = open(self.best_per_gen_file, "a")
         fhandler.writelines("Gen #%d scored %f pts: " % (self.cur_gen, best_in_gen.score) + str(best_in_gen.network) + "\n")
         fhandler.close()
+
+        with open(os.path.join(self.best_per_gen_pickle_folder, "Gen_{}".format(self.cur_gen)), "wb") as file:
+            pickle.dump(best_in_gen.network, file)
 
         if best_score_in_gen > self.best_score_ever:
             fhandler = open(self.best_ever_file, "w")

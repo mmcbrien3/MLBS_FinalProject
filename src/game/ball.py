@@ -63,6 +63,7 @@ class Ball(BaseObject):
         self.velocity = [np.sign(v) * np.max((0, np.abs(v) - self.deceleration)) for v in self.velocity]
 
     def check_for_bounces(self, objects):
+        paddles_hit = []
         for obj in objects:
             if self.rect.colliderect(obj.rect):
                 self.bounce(obj.velocity,
@@ -74,3 +75,5 @@ class Ball(BaseObject):
                             obj.rect.x,
                             obj.rect.y,
                             obj.SIZE)
+                paddles_hit.append(obj)
+        return paddles_hit

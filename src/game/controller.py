@@ -1,4 +1,5 @@
 import pygame as pg
+import numpy as np
 from src.game.ball import Ball
 from src.game.score_keeper import ScoreKeeper
 
@@ -69,7 +70,7 @@ class Controller(object):
 
         if self.right_computer_player is not None:
             output = self.right_computer_player.compute(self.get_neural_net_stimuli(ScoreKeeper.RIGHT_WINNER_DECLARATION))
-            pressed_keys = [self.left_computer_player.convert_output_to_keyboard_input(
+            pressed_keys = [self.right_computer_player.convert_output_to_keyboard_input(
                 output, self.score_keeper.RIGHT_WINNER_DECLARATION)]
 
             [o.handle_keyboard_input(pressed_keys) for o in self.game_objects]
@@ -78,19 +79,27 @@ class Controller(object):
         balls = [o for o in self.game_objects if type(o) is Ball]
         not_balls = [o for o in self.game_objects if type(o) is not Ball]
 
-        [ball.check_for_bounces(not_balls) for ball in balls]
+        paddles_hit = [ball.check_for_bounces(not_balls) for ball in balls][0]
+        for p in paddles_hit:
+            if p.starting_position[0] < 500:
+                self.score_keeper.paddle_hits[0] += 1
+            elif p.starting_position[1] > 500:
+                self.score_keeper.paddle_hits[1] += 1
 
     def get_winner(self):
         return self.score_keeper.get_winner()
+
+    def get_performances(self):
+        return self.score_keeper.get_player_performances()
 
     def get_neural_net_stimuli(self, side):
         left_paddle = [o for o in self.game_objects if o.starting_position[0] < 500][0]
         right_paddle = [o for o in self.game_objects if o.starting_position[0] > 500][0]
         ball = [o for o in self.game_objects if type(o) is Ball][0]
-        left_paddle_position = (left_paddle.rect.x, left_paddle.rect.y)
-        right_paddle_position = (right_paddle.rect.x, right_paddle.rect.y)
-        ball_position = (ball.rect.x, ball.rect.y)
-        ball_velocity = ball.velocity
+        left_paddle_position = (left_paddle.rect.x / self.dimensions[0], left_paddle.rect.y / self.dimensions[1])
+        right_paddle_position = (right_paddle.rect.x / self.dimensions[0], right_paddle.rect.y / self.dimensions[1])
+        ball_position = (ball.rect.x / self.dimensions[0], ball.rect.y / self.dimensions[1])
+        ball_velocity = np.asarray(ball.velocity) / 8
 
         if side == ScoreKeeper.LEFT_WINNER_DECLARATION:
             return [*left_paddle_position, *right_paddle_position, *ball_position, *ball_velocity]
@@ -98,7 +107,7 @@ class Controller(object):
             return [*right_paddle_position, *left_paddle_position, *ball_position, *ball_velocity]
 
     def _should_draw(self):
-        return self.left_computer_player is None and self.right_computer_player is None
+        return self.left_computer_player is None or self.right_computer_player is None
 
     def start_game(self):
         if self._should_draw():
@@ -128,6 +137,7 @@ class Controller(object):
                 print(self.frames_expired)
 
         print("The winner is {}".format(self.get_winner()))
+        print("The performances are {}".format(self.get_performances()))
 
         if self._should_draw():
             pg.quit()

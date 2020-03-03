@@ -21,7 +21,7 @@ class NeuroEvolutionTournamentManager(object):
         for i in range(self.max_generations):
             self.current_neural_nets = self.ne_controller.increment_gen()
             for nn in self.current_neural_nets:
-                self.neural_net_score_mapping[nn] = {"games_won": 0, "games_played": 0}
+                self.neural_net_score_mapping[nn] = {"games_won": 0, "games_played": 0, "score": 0}
             self.execute_generation()
 
     def execute_generation(self):
@@ -38,10 +38,11 @@ class NeuroEvolutionTournamentManager(object):
 
     def calculate_and_submit_scores(self):
         for nn in self.neural_net_score_mapping:
-            score = self._score_function(
-                self.neural_net_score_mapping[nn]["games_played"],
-                self.neural_net_score_mapping[nn]["games_won"]
-            )
+            score = self.neural_net_score_mapping[nn]["score"]
+            # self._score_function(
+            #     self.neural_net_score_mapping[nn]["games_played"],
+            #     self.neural_net_score_mapping[nn]["games_won"]
+            # )
             self.ne_controller.network_score(nn, score)
 
     def play_all_matchups(self):
@@ -49,12 +50,10 @@ class NeuroEvolutionTournamentManager(object):
             self.neural_net_score_mapping[matchup[0]]["games_played"] += 1
             self.neural_net_score_mapping[matchup[1]]["games_played"] += 1
 
-            winner = self._play_game(matchup[0], matchup[1])
+            performances = self._play_game(matchup[0], matchup[1])
 
-            if winner == ScoreKeeper.LEFT_WINNER_DECLARATION:
-                self.neural_net_score_mapping[matchup[0]]["games_won"] += 1
-            elif winner == ScoreKeeper.LEFT_WINNER_DECLARATION:
-                self.neural_net_score_mapping[matchup[1]]["games_won"] += 1
+            self.neural_net_score_mapping[matchup[0]]["score"] += performances[0]
+            self.neural_net_score_mapping[matchup[1]]["score"] += performances[1]
 
     def create_matchups(self):
         all_combinations = itertools.combinations(self.current_neural_nets, 2)
@@ -65,7 +64,8 @@ class NeuroEvolutionTournamentManager(object):
         match = Match()
         match.add_players(neural_net_left, neural_net_right)
         match.execute_match()
-        return match.get_winner()
+        return match.get_performances()
+
 
 if __name__ == "__main__":
     tourney = NeuroEvolutionTournamentManager()
