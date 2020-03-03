@@ -13,7 +13,7 @@ class NeuroEvolutionTournamentManager(object):
     def __init__(self):
         self.ne_controller = NeuroEvolutionController()
         self.current_neural_nets = None
-        self.max_generations = 10
+        self.max_generations = 100
         self.current_generation_matchups = None
         self.neural_net_score_mapping = {}
 
@@ -46,7 +46,12 @@ class NeuroEvolutionTournamentManager(object):
             self.ne_controller.network_score(nn, score)
 
     def play_all_matchups(self):
-        for matchup in self.current_generation_matchups:
+        fraction_of_matchups = 1 / 2
+        matchup_indexes = np.random.choice(self.current_generation_matchups.shape[0],
+                                            round(self.current_generation_matchups.shape[0] //
+                                                  (1 / fraction_of_matchups)))
+        for idx in matchup_indexes:
+            matchup = self.current_generation_matchups[idx]
             self.neural_net_score_mapping[matchup[0]]["games_played"] += 1
             self.neural_net_score_mapping[matchup[1]]["games_played"] += 1
 
@@ -58,7 +63,7 @@ class NeuroEvolutionTournamentManager(object):
     def create_matchups(self):
         all_combinations = itertools.combinations(self.current_neural_nets, 2)
 
-        self.current_generation_matchups = all_combinations
+        self.current_generation_matchups = np.asarray(list(all_combinations))
 
     def _play_game(self, neural_net_left, neural_net_right):
         match = Match()

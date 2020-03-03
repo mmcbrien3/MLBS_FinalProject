@@ -91,6 +91,8 @@ class Generation(object):
             if p2_perc <= perc and p2_perc > prev_perc:
                 p2 = self.genomes[count]
             if p1 and p2:
+                if p1 is p2:
+                    p2 = np.random.choice(self.genomes)
                 return [p1, p2]
             prev_perc = perc
             count += 1

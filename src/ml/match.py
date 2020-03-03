@@ -5,8 +5,8 @@ import pygame as pg
 
 class Match(object):
 
-    MAX_FRAMES_IN_GAME = 30 * 10
-    MAX_SCORE = 3
+    MAX_FRAMES_IN_GAME = 25 * 10
+    MAX_SCORE = 1
 
     def __init__(self):
         self.left_neural_net = None
