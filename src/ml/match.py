@@ -3,12 +3,12 @@ from src.game.paddle import Paddle
 from src.game.ball import Ball
 import pygame as pg
 
+
 class Match(object):
 
-    MAX_FRAMES_IN_GAME = 25 * 10
-    MAX_SCORE = 1
-
-    def __init__(self):
+    def __init__(self, max_frames, max_score):
+        self.max_frames = max_frames
+        self.max_score = max_score
         self.left_neural_net = None
         self.right_neural_net = None
         self.winner = None
@@ -27,8 +27,8 @@ class Match(object):
 
         ball = Ball()
         self.game_controller.add_game_objects(paddle_one, paddle_two, ball)
-        self.game_controller.max_frames = self.MAX_FRAMES_IN_GAME
-        self.game_controller.set_max_score(self.MAX_SCORE)
+        self.game_controller.max_frames = self.max_frames
+        self.game_controller.set_max_score(self.max_score)
 
     def add_players(self, left_player, right_player):
         self.left_neural_net = left_player

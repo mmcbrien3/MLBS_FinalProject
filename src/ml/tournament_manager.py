@@ -5,21 +5,21 @@ import pygame as pg
 import numpy as np
 import itertools
 
-class NeuroEvolutionTournamentManager(object):
 
-    MAX_FRAMES = 1200
-    MAX_SCORE = 2
+class TournamentManager(object):
 
     def __init__(self):
-        self.ne_controller = NeuroEvolutionController()
+        self.evolution_controller = NeuroEvolutionController()
         self.current_neural_nets = None
         self.max_generations = 100
         self.current_generation_matchups = None
         self.neural_net_score_mapping = {}
+        self.max_frames = 60 * 2.5
+        self.max_score = 1
 
     def run_for_max_generations(self):
         for i in range(self.max_generations):
-            self.current_neural_nets = self.ne_controller.increment_gen()
+            self.current_neural_nets = self.evolution_controller.increment_gen()
             for nn in self.current_neural_nets:
                 self.neural_net_score_mapping[nn] = {"games_won": 0, "games_played": 0, "score": 0}
             self.execute_generation()
@@ -43,7 +43,7 @@ class NeuroEvolutionTournamentManager(object):
             #     self.neural_net_score_mapping[nn]["games_played"],
             #     self.neural_net_score_mapping[nn]["games_won"]
             # )
-            self.ne_controller.network_score(nn, score)
+            self.evolution_controller.submit_network_and_score(nn, score)
 
     def play_all_matchups(self):
         fraction_of_matchups = 1 / 2
@@ -66,12 +66,12 @@ class NeuroEvolutionTournamentManager(object):
         self.current_generation_matchups = np.asarray(list(all_combinations))
 
     def _play_game(self, neural_net_left, neural_net_right):
-        match = Match()
+        match = Match(self.max_frames, self.max_score)
         match.add_players(neural_net_left, neural_net_right)
         match.execute_match()
         return match.get_performances()
 
 
 if __name__ == "__main__":
-    tourney = NeuroEvolutionTournamentManager()
+    tourney = TournamentManager()
     tourney.run_for_max_generations()

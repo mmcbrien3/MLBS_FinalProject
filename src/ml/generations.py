@@ -1,10 +1,16 @@
-from src.ml.generation import Generation
+from src.ml.ne_generation import NeGeneration
 from src.ml.network import Network
 
 
 class Generations(object):
 
-    def __init__(self, network_layers, num_per_gen, num_children, elitism, mutation_rate, mutation_range, score_sort, random_behavior):
+    NE_GENERATION_TYPE = "NeuroEvolution Generation"
+
+    def __init__(self, generation_type, network_layers,
+                 num_per_gen, num_children,
+                 elitism, mutation_rate,
+                 mutation_range, score_sort,
+                 random_behavior):
         self.network_layers = network_layers
         self.generations = []
         self.elitism = elitism
@@ -14,10 +20,19 @@ class Generations(object):
         self.num_per_gen = num_per_gen
         self.random_behavior = random_behavior
         self.num_children = num_children
-        self.cur_gen = Generation(self.num_per_gen, self.num_children,
-                                  self.elitism, self.mutation_rate,
-                                  self.mutation_range, self.score_sort,
-                                  self.random_behavior)
+        self.gen_type = generation_type
+        self.cur_gen = self._create_generation()
+        NeGeneration(self.num_per_gen, self.num_children,
+                                         self.elitism, self.mutation_rate,
+                                         self.mutation_range, self.score_sort,
+                                         self.random_behavior)
+
+    def _create_generation(self):
+        if self.gen_type == self.NE_GENERATION_TYPE:
+            return NeGeneration(self.num_per_gen, self.num_children,
+                                self.elitism, self.mutation_rate,
+                                self.mutation_range, self.score_sort,
+                                self.random_behavior)
 
     def first_generation(self):
         out = []
@@ -26,11 +41,7 @@ class Generations(object):
             nn.perceptron_generation(self.network_layers[0], self.network_layers[1], self.network_layers[2])
             out.append(nn.get_save())
 
-        self.generations.append(Generation(self.num_per_gen, self.num_children,
-                                           self.elitism, self.mutation_rate,
-                                           self.mutation_range, self.score_sort,
-                                           self.random_behavior)
-                                )
+        self.generations.append(self._create_generation())
         return out
 
     def next_generation(self):
@@ -38,11 +49,7 @@ class Generations(object):
             return self.first_generation()
 
         gen = self.generations[-1].generate_next_generation()
-        self.generations.append(Generation(self.num_per_gen, self.num_children,
-                                           self.elitism, self.mutation_rate,
-                                           self.mutation_range, self.score_sort,
-                                           self.random_behavior)
-                                )
+        self.generations.append(self._create_generation())
         return gen
 
     def add_genome(self, g):
