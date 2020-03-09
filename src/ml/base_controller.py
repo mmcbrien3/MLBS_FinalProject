@@ -1,7 +1,7 @@
 from src.ml.genome import Genome
 from src.ml.network import Network
 import os
-
+import pickle
 
 class BaseController(object):
 
