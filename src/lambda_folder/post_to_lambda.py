@@ -38,7 +38,6 @@ async def get_data_asynchronous(matches, output_dict):
 
 
 def post_to_lambda(session, event, output_dict):
-    print(json.dumps(event))
     resp = session.post(api_url, json=event).json()
 
     output_dict[event['left_uuid']] += resp['performances'][0]
