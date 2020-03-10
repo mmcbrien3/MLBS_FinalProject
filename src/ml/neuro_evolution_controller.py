@@ -11,7 +11,7 @@ class NeuroEvolutionController(BaseController):
 
     def __init__(self):
         super().__init__()
-        self.num_per_gen = 4
+        self.num_per_gen = 2
         self.num_children = 1
         self.elitism = 0.2
         self.mutation_rate = 0.2

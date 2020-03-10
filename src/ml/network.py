@@ -2,6 +2,7 @@ from src.ml.layer import Layer
 from scipy.stats import logistic
 import numpy as np
 import pygame as pg
+from uuid import uuid4
 
 class Network(object):
 
@@ -10,6 +11,7 @@ class Network(object):
 
     def __init__(self):
         self.layers = []
+        self.uuid = str(uuid4())
 
     def perceptron_generation(self, num_input_neurons, hiddens, num_outputs):
         index = 0
