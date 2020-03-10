@@ -1,6 +1,7 @@
 from src.ml.neuro_evolution_controller import NeuroEvolutionController
 from src.ml.match import Match
 import numpy as np
+import time
 import itertools
 from src.lambda_folder import post_to_lambda
 
@@ -23,9 +24,11 @@ class CloudTournamentManager(object):
             self.execute_generation()
 
     def execute_generation(self):
+        st = time.time()
         self.create_matchups()
         self.play_all_matchups_in_the_cloud()
         self.calculate_and_submit_scores()
+        print('Generation of {} matchups took {} seconds'.format(len(self.current_generation_matchups), time.time()-st))
 
     @staticmethod
     def _score_function(games_played, games_won):
