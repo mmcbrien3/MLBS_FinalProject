@@ -3,7 +3,7 @@ import shutil
 
 
 def clear_old_code():
-    lambda_function_folder = os.path.join(os.path.dirname(__file__), 'sam_execute_match', 'hello_world')
+    lambda_function_folder = os.path.join(os.path.dirname(__file__), 'sam_execute_match', 'execute_match')
     if os.path.isdir(lambda_function_folder):
         shutil.rmtree(lambda_function_folder)
     os.mkdir(lambda_function_folder)
@@ -14,7 +14,7 @@ def get_latest_code():
     asset_required_files = None
     ml_required_files = ['match.py', 'network.py', 'layer.py', 'neuron.py']
 
-    sam_folder = os.path.join(os.path.dirname(__file__), 'sam_execute_match', 'hello_world')
+    sam_folder = os.path.join(os.path.dirname(__file__), 'sam_execute_match', 'execute_match')
     src_folder = os.path.join(os.path.dirname(__file__), os.pardir)
     game_folder = os.path.join(src_folder, 'game')
     ml_folder = os.path.join(src_folder, 'ml')
@@ -59,7 +59,6 @@ def get_code_from_folder(folder, required_files):
 def deploy_with_sam():
     LAMBDA_S3_BUCKET = "execute-match"
     AWS_REGION = "us-east-1"
-    API_NAME = "HelloWorldApi"
     BASE_PATH = os.path.join(os.path.dirname(__file__), 'sam_execute_match')
     STACK_NAME = "execute-match"
     BUILD_DIR = "%s/%s" % (BASE_PATH, "build_artifact")

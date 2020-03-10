@@ -1,7 +1,8 @@
 from src.ml.layer import Layer
-from scipy.stats import logistic
+import math
 import numpy as np
 import pygame as pg
+from uuid import uuid4
 
 class Network(object):
 
@@ -10,6 +11,7 @@ class Network(object):
 
     def __init__(self):
         self.layers = []
+        self.uuid = str(uuid4())
 
     def perceptron_generation(self, num_input_neurons, hiddens, num_outputs):
         index = 0
@@ -79,7 +81,7 @@ class Network(object):
         return out
 
     def activation(self, a):
-        return logistic.cdf(a)
+        return 1 / (1 + math.exp(a))
 
     def convert_output_to_keyboard_input(self, nn_output, side):
         if side == "LEFT":

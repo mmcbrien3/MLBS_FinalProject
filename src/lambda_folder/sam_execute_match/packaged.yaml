@@ -10,32 +10,32 @@ Globals:
     Timeout: 15
     MemorySize: 256
 Resources:
-  HelloWorldFunction:
+  ExecuteMatchFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://execute-match/9fc22abd3dc274fb96f0d21518af9413
+      CodeUri: s3://execute-match/d50a8d266116281daf179af0f83a5268
       Handler: app.lambda_handler
       Runtime: python3.6
       Events:
-        HelloWorld:
+        ExecuteMatch:
           Type: Api
           Properties:
             Path: /execute_match
             Method: post
 Outputs:
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
+  ExecuteMatchApi:
+    Description: API Gateway endpoint URL for Prod stage for Execute Match function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+  ExecuteMatchFunction:
+    Description: Execute Match Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - ExecuteMatchFunction
       - Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
+  ExecuteMathIamRole:
+    Description: Implicit IAM Role created for execute match function
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - ExecuteMatchFunctionRole
       - Arn
