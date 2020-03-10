@@ -16,6 +16,7 @@ class BaseController(object):
         self.historic = 0
         self.cur_gen = 0
         self.best_score_ever = -1
+        self.score_sort = -1
 
         self.generations = None
 
