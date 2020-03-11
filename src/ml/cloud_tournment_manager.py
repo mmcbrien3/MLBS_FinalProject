@@ -1,4 +1,4 @@
-from src.lambda_folder import post_to_lambda
+from src.aws import post_to_lambda
 from src.ml.base_tournament_manager import BaseTournamentManager
 
 class CloudTournamentManager(BaseTournamentManager):
