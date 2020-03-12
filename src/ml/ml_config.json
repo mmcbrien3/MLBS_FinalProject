@@ -1,5 +1,5 @@
 {
-    "num_per_gen": 20,
+    "num_per_gen": 40,
     "num_children": 1,
     "elite_percentage": 0.20,
     "mutation_rate": 0.20,
@@ -7,7 +7,7 @@
     "completely_new_rate": 0.10,
     "network_layers": [8, [8, 8, 8, 8], 4],
     "run_in_cloud": true,
-    "max_generations": 100,
+    "max_generations": 2,
     "max_frames": 300,
     "max_score": 2,
     "genetic_algorithm": "NeuroEvolution"

@@ -136,8 +136,6 @@ class Controller(object):
             if self.frames_expired % 60 == 0:
                 print(self.frames_expired)
 
-        print("The winner is {}".format(self.get_winner()))
-        print("The performances are {}".format(self.get_performances()))
 
         if self._should_draw():
             pg.quit()
