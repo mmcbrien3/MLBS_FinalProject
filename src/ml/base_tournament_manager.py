@@ -32,6 +32,7 @@ class BaseTournamentManager(object):
             for nn in self.current_neural_nets:
                 self.neural_net_score_mapping[nn] = {"games_won": 0, "games_played": 0, "score": 0}
             self.execute_generation()
+        self.evolution_controller.save_best_score()
 
     def execute_generation(self):
         st = time.time()
