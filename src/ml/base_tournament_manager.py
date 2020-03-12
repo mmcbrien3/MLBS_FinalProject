@@ -38,6 +38,7 @@ class BaseTournamentManager(object):
         self.create_matchups()
         self.play_all_matchups()
         self.calculate_and_submit_scores()
+        self.neural_net_score_mapping = {}
         print('Generation of {} matchups took {} seconds'.format(len(self.current_generation_matchups), time.time()-st))
 
     @staticmethod

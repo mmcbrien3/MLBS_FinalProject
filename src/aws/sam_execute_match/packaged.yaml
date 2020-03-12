@@ -13,7 +13,7 @@ Resources:
   ExecuteMatchFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://execute-match/798cf9db9a294660ba806a8b48c4f6dd
+      CodeUri: s3://execute-match/f32d70c2fa807b9dcf9baaeed463f59f
       Handler: app.lambda_handler
       Runtime: python3.6
       Events:

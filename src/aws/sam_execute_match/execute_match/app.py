@@ -3,7 +3,6 @@ from src.ml.network import Network
 import boto3
 import json
 
-
 def lambda_handler(event, context):
     net_one = event['player_one']
     net_two = event['player_two']

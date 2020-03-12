@@ -23,7 +23,7 @@ def create_lambda_event(left_network, right_network,
 
 async def get_data_asynchronous(matches):
 
-    num_workers = 40
+    num_workers = int(len(matches) / 10)
     batches_of_matches = []
     size_of_batch = int(np.ceil(len(matches) / num_workers))
     for i in range(0, len(matches), size_of_batch):
