@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 from src.game.ball import Ball
 from src.game.paddle import Paddle
+import src.ml.match
 import src.game.score_keeper
 
 class Controller(object):
@@ -114,21 +115,29 @@ class Controller(object):
         left_paddle = [o for o in self.game_objects if o.starting_position[0] < 500]
         if len(left_paddle) > 0:
             left_paddle = left_paddle[0]
-            left_paddle_position = (left_paddle.rect.x / self.dimensions[0], left_paddle.rect.y / self.dimensions[1])
+            left_paddle_position = [left_paddle.rect.x / self.dimensions[0], left_paddle.rect.y / self.dimensions[1]]
 
         right_paddle = [o for o in self.game_objects if o.starting_position[0] > 500]
         if len(right_paddle) > 0:
             right_paddle = right_paddle[0]
-            right_paddle_position = (right_paddle.rect.x / self.dimensions[0], right_paddle.rect.y / self.dimensions[1])
+            right_paddle_position = [right_paddle.rect.x / self.dimensions[0], right_paddle.rect.y / self.dimensions[1]]
 
         ball = [o for o in self.game_objects if type(o) is Ball][0]
         ball_position = (ball.rect.x / self.dimensions[0], ball.rect.y / self.dimensions[1])
         ball_velocity = np.asarray(ball.velocity) / 8
 
         if side == src.game.score_keeper.ScoreKeeper.LEFT_WINNER_DECLARATION and left_paddle_position is not None:
-            return [*left_paddle_position, *ball_position]
+            relative_position = list(np.asarray(left_paddle_position) - np.asarray(ball_position))
+            if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
+                return relative_position + [0, 0]
+            else:
+                return relative_position + right_paddle_position
         elif side == src.game.score_keeper.ScoreKeeper.RIGHT_WINNER_DECLARATION and right_paddle_position is not None:
-            return [*right_paddle_position, *ball_position]
+            relative_position = list(np.asarray(right_paddle_position) - np.asarray(ball_position))
+            if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
+                return relative_position + [0, 0]
+            else:
+                return relative_position + left_paddle_position
 
     def _should_draw(self):
         return not self.do_not_draw and (self.left_computer_player is None or self.right_computer_player is None)
@@ -155,8 +164,7 @@ class Controller(object):
             if self._should_draw():
                 self._do_draws()
             if self._should_draw():
-                pass
-                # pg.time.Clock().tick(60)
+                pg.time.Clock().tick(60)
             self.frames_expired += 1
             if self.frames_expired % 60 == 0:
                 print(self.frames_expired)

@@ -1,5 +1,5 @@
 {
-    "num_per_gen": 30,
+    "num_per_gen": 40,
     "num_children": 1,
     "elite_percentage": 0.1,
     "mutation_rate": 0.35,

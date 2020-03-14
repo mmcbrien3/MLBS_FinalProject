@@ -27,10 +27,12 @@ class KinesisManager(object):
 
         self.client.delete_stream(StreamName=self.stream_name)
 
-    def read_next_n_records(self, n, match_type):
+    def read_next_n_records(self, n):
 
         output_dict = {}
         records_read = 0
+        any_records_received = False
+        iterations_since_last_received = 0
         while records_read < n:
             get_records_response = self.client.get_records(ShardIterator=self.shard_iterator, Limit=5000)
             records = get_records_response['Records']
@@ -38,37 +40,46 @@ class KinesisManager(object):
             self.shard_iterator = get_records_response['NextShardIterator'] \
                 if len(records) > 0 else self.shard_iterator
 
-            output_dict = self._handle_records(records, output_dict, match_type)
+            output_dict = self._handle_records(records, output_dict)
 
             records_read += len(records)
 
             if len(records) > 0:
                 print('Read {} records from kinesis...'.format(records_read))
+                any_records_received = True
+                iterations_since_last_received = 0
+            else:
+                iterations_since_last_received += 1
+
+            if any_records_received and iterations_since_last_received > 4:
+                print('terminating early due to no recent records')
+                break
 
             time.sleep(0.25)
 
         return output_dict
 
-    def _handle_records(self, records, output_dict, match_type):
+    def _handle_records(self, records, output_dict):
         for r in records:
-            output_dict = self._handle_single_record(r, output_dict, match_type)
+            output_dict = self._handle_single_record(r, output_dict)
 
         return output_dict
 
-    def _handle_single_record(self, record, output_dict, match_type):
+    def _handle_single_record(self, record, output_dict):
         data = json.loads(record['Data'].decode('utf-8'))
-        if data['left_uuid'] not in output_dict:
-            output_dict[data['left_uuid']] = data['performances'][0]
-        else:
-            output_dict[data['left_uuid']] += data['performances'][0]
 
-        if match_type != src.ml.match.Match.SOLO_PRACTICE:
+        if data['neural_nets_playing'][0]:
+            if data['left_uuid'] not in output_dict:
+                output_dict[data['left_uuid']] = data['performances'][0]
+            else:
+                output_dict[data['left_uuid']] += data['performances'][0]
+
+        if data['neural_nets_playing'][1]:
             if data['right_uuid'] not in output_dict:
                 output_dict[data['right_uuid']] = data['performances'][1]
             else:
                 output_dict[data['right_uuid']] += data['performances'][1]
-        else:
-            output_dict[data['right_uuid']] = 0
+
         return output_dict
 
     def _get_shard_iterator(self):

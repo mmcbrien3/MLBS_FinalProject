@@ -25,7 +25,7 @@ class CloudTournamentManager(BaseTournamentManager):
                                                                      max_frames=self.max_frames,
                                                                      max_score=self.max_score))
 
-        output_dict = post_to_lambda.run_generation(lambda_matches, self.kinesis_manager, self.current_match_type)
+        output_dict = post_to_lambda.run_generation(lambda_matches, self.kinesis_manager)
         for uuid, score in output_dict.items():
 
             for nn in self.neural_net_score_mapping.keys():

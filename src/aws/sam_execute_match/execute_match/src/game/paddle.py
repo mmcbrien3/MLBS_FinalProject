@@ -32,7 +32,11 @@ class Paddle(BaseObject):
     def update(self):
         self.speed = [np.sign(sp) * np.max((0, np.abs(sp) - self.deceleration)) for sp in self.speed]
         self.velocity = [sp for sp in self.speed]
+        cur_position = [self.rect.x, self.rect.y]
         self._move(self.velocity[0], self.velocity[1])
+
+        if cur_position == [self.rect.x, self.rect.y]:
+            self.velocity = [0, 0]
 
     def _check_on_boundary(self, x_pos, y_pos):
         boundary_check = super()._check_on_boundary(x_pos, y_pos)
