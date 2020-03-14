@@ -14,6 +14,7 @@ class ScoreKeeper(object):
         self.score_font = pg.font.Font(pg.font.get_default_font(), 18)
         self.goal_locations = []
         self.paddle_hits = [0, 0]
+        self.passes = [0, 0]
         self.ball = None
         self.scores = [0, 0]
         self.max_score = 2
@@ -52,16 +53,16 @@ class ScoreKeeper(object):
         return scored
 
     def get_player_performances(self):
-        performances = self.paddle_hits[:]
+        performances = self.passes[:]
 
-        winner = self.get_winner()
-        if winner == self.LEFT_WINNER_DECLARATION:
-            performances[0] += 10
-        elif winner == self.RIGHT_WINNER_DECLARATION:
-            performances[1] += 10
-
-        performances[0] += self.scores[0] * 2
-        performances[1] += self.scores[1] * 2
+        # winner = self.get_winner()
+        # if winner == self.LEFT_WINNER_DECLARATION:
+        #     performances[0] += 10
+        # elif winner == self.RIGHT_WINNER_DECLARATION:
+        #     performances[1] += 10
+        #
+        # performances[0] += self.scores[0] * 2
+        # performances[1] += self.scores[1] * 2
         return performances
 
     def draw(self, window):

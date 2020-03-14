@@ -3,15 +3,16 @@ from src.ml.network import Network
 import boto3
 import json
 
+GAMES_TO_RUN_LOCALLY = 4
 def lambda_handler(event, context):
 
-    if type(event) == list and len(event) > 2:
+    if type(event) == list and len(event) > GAMES_TO_RUN_LOCALLY:
         lambda_client = boto3.client('lambda')
-        for i in range(2, len(event), 2):
+        for i in range(GAMES_TO_RUN_LOCALLY, len(event), GAMES_TO_RUN_LOCALLY):
             lambda_client.invoke(FunctionName="execute-match-ExecuteMatchFunction-42K2YE95E4RX",
                                  InvocationType='Event',
                                  Payload=json.dumps(event[i:i+2]).encode())
-        event = event[:2]
+        event = event[:GAMES_TO_RUN_LOCALLY]
     elif type(event) == dict:
         event = [event]
 

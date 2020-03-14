@@ -10,7 +10,7 @@ from src.ml.network import Network
 def get_computer_player():
     neural_net_folder = os.path.join(os.getcwd(), os.pardir, "ml", "neural_nets")
     files = sorted(os.listdir(neural_net_folder), key=lambda s: int(s[s.index("_")+1:]))
-    with open(os.path.join(neural_net_folder, files[-1]), "rb") as file:
+    with open(os.path.join(neural_net_folder, "Gen_100"), "rb") as file:
         return pickle.load(file)
 
 

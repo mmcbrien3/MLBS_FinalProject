@@ -42,9 +42,20 @@ class Controller(object):
         return event.type == pg.QUIT
 
     def _do_updates(self):
+        balls = [o for o in self.game_objects if type(o) is Ball]
+        cur_ball_pos = balls[0].rect.x
+
         [o.update() for o in self.game_objects]
         if self.score_keeper.check_for_goal():
             [o.reset_to_starting_position() for o in self.game_objects]
+
+        for o in balls:
+            if o.rect.x > 500 and cur_ball_pos < 500:
+                self.score_keeper.passes[0] += 1
+                print(self.score_keeper.passes)
+            if o.rect.x < 500 and cur_ball_pos > 500:
+                self.score_keeper.passes[1] += 1
+                print(self.score_keeper.passes)
 
     def _do_draws(self):
         self.window.fill(self.BACKGROUND_COLOR)
@@ -102,9 +113,9 @@ class Controller(object):
         ball_velocity = np.asarray(ball.velocity) / 8
 
         if side == ScoreKeeper.LEFT_WINNER_DECLARATION:
-            return [*left_paddle_position, *right_paddle_position, *ball_position, *ball_velocity]
+            return [*left_paddle_position, *ball_position]
         elif side == ScoreKeeper.RIGHT_WINNER_DECLARATION:
-            return [*right_paddle_position, *left_paddle_position, *ball_position, *ball_velocity]
+            return [*right_paddle_position, *ball_position]
 
     def _should_draw(self):
         return self.left_computer_player is None or self.right_computer_player is None
