@@ -18,12 +18,12 @@ def create_lambda_event(left_network, right_network,
     lambda_event.update({'left_uuid': left_uuid})
     lambda_event.update({'right_uuid': right_uuid})
     lambda_event.update({'stream_name': stream_name})
-    return json.dumps(lambda_event).encode()
+    return json.dumps(lambda_event)
 
 
 async def get_data_asynchronous(matches):
 
-    num_workers = int(len(matches) / 10)
+    num_workers = np.min((int(len(matches) / 2), 200))
     batches_of_matches = []
     size_of_batch = int(np.ceil(len(matches) / num_workers))
     for i in range(0, len(matches), size_of_batch):
@@ -44,10 +44,9 @@ async def get_data_asynchronous(matches):
 
 def post_to_lambda(lambda_client, batch):
 
-    for event in batch:
-        lambda_client.invoke(FunctionName="execute-match-ExecuteMatchFunction-42K2YE95E4RX",
-                             InvocationType='Event',
-                             Payload=event)
+    lambda_client.invoke(FunctionName="execute-match-ExecuteMatchFunction-42K2YE95E4RX",
+                         InvocationType='Event',
+                         Payload=json.dumps(batch).encode())
 
 
 def pull_results_from_kinesis(kinesis_manager, number_of_matches):
@@ -66,3 +65,15 @@ def run_generation(list_of_matches: List[Dict], kinesis_manager):
 
     print('Waiting on results from Kinesis...')
     return pull_results_from_kinesis(kinesis_manager, len(list_of_matches))
+
+if __name__ == "__main__":
+    events = list(range(4))
+    lc = boto3.client('lambda')
+    st = time.time()
+    for event in events:
+        lc.invoke(FunctionName="execute-match-ExecuteMatchFunction-42K2YE95E4RX",
+                                 InvocationType='Event',
+                                 Payload=json.dumps(str(event)))
+    print("Took {} seconds".format(time.time() - st))
+
+

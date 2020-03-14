@@ -4,35 +4,49 @@ import boto3
 import json
 
 def lambda_handler(event, context):
-    net_one = event['player_one']
-    net_two = event['player_two']
-    max_frames = event['max_frames']
-    max_score = event['max_score']
-    left_uuid = event['left_uuid']
-    right_uuid = event['right_uuid']
 
-    stream_name = event['stream_name']
-    kinesis_client = boto3.client('kinesis')
+    if type(event) == list and len(event) > 2:
+        lambda_client = boto3.client('lambda')
+        for i in range(2, len(event), 2):
+            lambda_client.invoke(FunctionName="execute-match-ExecuteMatchFunction-42K2YE95E4RX",
+                                 InvocationType='Event',
+                                 Payload=json.dumps(event[i:i+2]).encode())
+        event = event[:2]
+    elif type(event) == dict:
+        event = [event]
 
-    p_one = Network()
-    p_one.set_save(net_one)
+    for current_event in event:
+        if type(current_event) == str:
+            current_event = json.loads(current_event)
+        net_one = current_event['player_one']
+        net_two = current_event['player_two']
+        max_frames = current_event['max_frames']
+        max_score = current_event['max_score']
+        left_uuid = current_event['left_uuid']
+        right_uuid = current_event['right_uuid']
 
-    p_two = Network()
-    p_two.set_save(net_two)
-    match = Match(max_frames, max_score)
-    match.add_players(p_one, p_two)
-    match.execute_match()
+        stream_name = current_event['stream_name']
+        kinesis_client = boto3.client('kinesis')
 
-    match_result = {
-        'performances': match.get_performances(),
-        'left_uuid': left_uuid,
-        'right_uuid': right_uuid
-    }
+        p_one = Network()
+        p_one.set_save(net_one)
 
-    put_record_result = kinesis_client.put_record(StreamName=stream_name,
-                                                  Data=json.dumps(match_result).encode(),
-                                                  PartitionKey='0')
-    print(put_record_result)
+        p_two = Network()
+        p_two.set_save(net_two)
+        match = Match(max_frames, max_score)
+        match.add_players(p_one, p_two)
+        match.execute_match()
+
+        match_result = {
+            'performances': match.get_performances(),
+            'left_uuid': left_uuid,
+            'right_uuid': right_uuid
+        }
+
+        put_record_result = kinesis_client.put_record(StreamName=stream_name,
+                                                      Data=json.dumps(match_result).encode(),
+                                                      PartitionKey='0')
+        print(put_record_result)
     return {
         'Status': 'Success',
         'StatusCode': 200
