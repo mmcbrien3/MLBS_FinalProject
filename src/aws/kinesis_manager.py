@@ -2,6 +2,7 @@ import boto3
 import json
 import uuid
 import time
+import src.ml.match
 
 class KinesisManager(object):
 
@@ -26,7 +27,7 @@ class KinesisManager(object):
 
         self.client.delete_stream(StreamName=self.stream_name)
 
-    def read_next_n_records(self, n):
+    def read_next_n_records(self, n, match_type):
 
         output_dict = {}
         records_read = 0
@@ -37,7 +38,7 @@ class KinesisManager(object):
             self.shard_iterator = get_records_response['NextShardIterator'] \
                 if len(records) > 0 else self.shard_iterator
 
-            output_dict = self._handle_records(records, output_dict)
+            output_dict = self._handle_records(records, output_dict, match_type)
 
             records_read += len(records)
 
@@ -48,22 +49,26 @@ class KinesisManager(object):
 
         return output_dict
 
-    def _handle_records(self, records, output_dict):
+    def _handle_records(self, records, output_dict, match_type):
         for r in records:
-            output_dict = self._handle_single_record(r, output_dict)
+            output_dict = self._handle_single_record(r, output_dict, match_type)
 
         return output_dict
 
-    def _handle_single_record(self, record, output_dict):
+    def _handle_single_record(self, record, output_dict, match_type):
         data = json.loads(record['Data'].decode('utf-8'))
         if data['left_uuid'] not in output_dict:
             output_dict[data['left_uuid']] = data['performances'][0]
         else:
             output_dict[data['left_uuid']] += data['performances'][0]
-        if data['right_uuid'] not in output_dict:
-            output_dict[data['right_uuid']] = data['performances'][1]
+
+        if match_type != src.ml.match.Match.SOLO_PRACTICE:
+            if data['right_uuid'] not in output_dict:
+                output_dict[data['right_uuid']] = data['performances'][1]
+            else:
+                output_dict[data['right_uuid']] += data['performances'][1]
         else:
-            output_dict[data['right_uuid']] += data['performances'][1]
+            output_dict[data['right_uuid']] = 0
         return output_dict
 
     def _get_shard_iterator(self):

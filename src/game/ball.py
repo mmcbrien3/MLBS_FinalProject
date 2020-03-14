@@ -8,7 +8,7 @@ class Ball(BaseObject):
     IMAGE_NAME = "ball.png"
     SIZE = (30, 30)
 
-    def __init__(self):
+    def __init__(self, forced_starting_velocity=None):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(asset_getter.get_asset(self.IMAGE_NAME)), self.SIZE)
         self.rect = self.image.get_rect()
@@ -16,7 +16,7 @@ class Ball(BaseObject):
         self.rect.x = self.starting_position[0]
         self.rect.y = self.starting_position[1]
         self.deceleration = .01
-
+        self.forced_starting_velocity = forced_starting_velocity
         self.velocity = self._make_random_starting_velocity()
 
     def reset_to_starting_position(self):
@@ -24,6 +24,8 @@ class Ball(BaseObject):
         self.velocity = self._make_random_starting_velocity()
 
     def _make_random_starting_velocity(self):
+        if self.forced_starting_velocity is not None:
+            return self.forced_starting_velocity
         initial_velocity = np.random.randint(-8, 8)
         return [np.random.choice([-3, 3]), np.sign(initial_velocity + 0.1) * np.max((3, np.abs(initial_velocity)))]
 

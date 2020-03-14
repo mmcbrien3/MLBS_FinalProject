@@ -1,5 +1,5 @@
 from src.ml.neuro_evolution_controller import NeuroEvolutionController
-from src.ml.match import Match
+import src.ml.match
 import numpy as np
 import time
 import itertools
@@ -22,9 +22,25 @@ class BaseTournamentManager(object):
         self.max_frames = config['max_frames']
         self.max_score = config['max_score']
 
+        self.solo_generations = config['generation_match_types']['solo_generations']
+        self.passing_generations_max = config['generation_match_types']['passing_generations'] + self.solo_generations
+
+        if self.passing_generations_max > self.max_generations:
+            raise ValueError("Too many solo and passing generations when compared to max generations in config file.")
         self.current_neural_nets = None
         self.current_generation_matchups = None
         self.neural_net_score_mapping = {}
+        self.current_match_type = None
+        self.update_current_match_type()
+
+    def update_current_match_type(self):
+        if self.evolution_controller.cur_gen < self.solo_generations:
+            self.current_match_type = src.ml.match.Match.SOLO_PRACTICE
+        elif self.evolution_controller.cur_gen < self.passing_generations_max:
+            self.current_match_type = src.ml.match.Match.PASSING
+        else:
+            self.current_match_type = src.ml.match.Match.FULL
+        print("Next generation has match type {}".format(self.current_match_type))
 
     def run_for_max_generations(self):
         for i in range(self.max_generations):
@@ -32,6 +48,7 @@ class BaseTournamentManager(object):
             for nn in self.current_neural_nets:
                 self.neural_net_score_mapping[nn] = {"games_won": 0, "games_played": 0, "score": 0}
             self.execute_generation()
+            self.update_current_match_type()
         self.evolution_controller.save_best_score()
 
     def execute_generation(self):
@@ -63,7 +80,7 @@ class BaseTournamentManager(object):
         self.current_generation_matchups = np.asarray(list(all_combinations))
 
     def _play_game(self, neural_net_left, neural_net_right):
-        match = Match(self.max_frames, self.max_score)
+        match = src.ml.match.Match(self.max_frames, self.max_score, self.current_match_type)
         match.add_players(neural_net_left, neural_net_right)
         match.execute_match()
         return match.get_performances()

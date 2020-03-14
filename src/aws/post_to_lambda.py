@@ -10,7 +10,8 @@ api_url = "https://g9sjqvnoql.execute-api.us-east-1.amazonaws.com/Prod/execute_m
 
 def create_lambda_event(left_network, right_network,
                         left_uuid, right_uuid,
-                        stream_name, max_frames=60*2.5, max_score=1):
+                        stream_name, match_type,
+                        max_frames=60*2.5, max_score=1):
     lambda_event = {"max_frames": max_frames, "max_score": max_score}
 
     lambda_event.update({'player_one': left_network})
@@ -18,6 +19,7 @@ def create_lambda_event(left_network, right_network,
     lambda_event.update({'left_uuid': left_uuid})
     lambda_event.update({'right_uuid': right_uuid})
     lambda_event.update({'stream_name': stream_name})
+    lambda_event.update({'match_type': match_type})
     return json.dumps(lambda_event)
 
 
@@ -49,12 +51,12 @@ def post_to_lambda(lambda_client, batch):
                          Payload=json.dumps(batch).encode())
 
 
-def pull_results_from_kinesis(kinesis_manager, number_of_matches):
+def pull_results_from_kinesis(kinesis_manager, number_of_matches, match_type):
 
-    return kinesis_manager.read_next_n_records(number_of_matches)
+    return kinesis_manager.read_next_n_records(number_of_matches, match_type)
 
 
-def run_generation(list_of_matches: List[Dict], kinesis_manager):
+def run_generation(list_of_matches: List[Dict], kinesis_manager, match_type):
 
     print('Submitting Lambda Events...')
     st = time.time()
@@ -64,7 +66,7 @@ def run_generation(list_of_matches: List[Dict], kinesis_manager):
     print('Took {} seconds to submit all events'.format(time.time() - st))
 
     print('Waiting on results from Kinesis...')
-    return pull_results_from_kinesis(kinesis_manager, len(list_of_matches))
+    return pull_results_from_kinesis(kinesis_manager, len(list_of_matches), match_type)
 
 if __name__ == "__main__":
     events = list(range(4))

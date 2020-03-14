@@ -1,14 +1,19 @@
 {
     "num_per_gen": 30,
     "num_children": 1,
-    "elite_percentage": 0.20,
-    "mutation_rate": 0.20,
+    "elite_percentage": 0.1,
+    "mutation_rate": 0.35,
     "mutation_range": 0.5,
-    "completely_new_rate": 0.10,
+    "completely_new_rate": 0.2,
     "network_layers": [4, [4], 4],
     "run_in_cloud": true,
-    "max_generations": 100,
-    "max_frames": 300,
+    "max_generations": 500,
+    "max_frames": 450,
+    "generation_match_types":
+    {
+        "solo_generations": 50,
+        "passing_generations": 50
+    },
     "max_score": 2,
     "genetic_algorithm": "NeuroEvolution"
 }

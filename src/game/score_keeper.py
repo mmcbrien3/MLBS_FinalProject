@@ -1,6 +1,6 @@
 import pygame as pg
 import numpy as np
-
+import src.ml.match
 
 class ScoreKeeper(object):
 
@@ -20,6 +20,10 @@ class ScoreKeeper(object):
         self.max_score = 2
         self.goal_center = 300
         self.goal_size = 300
+        self.match_type = None
+
+    def set_match_type(self, match_type):
+        self.match_type = match_type
 
     def get_winner(self):
         if self.scores[0] > self.scores[1]:
@@ -32,7 +36,9 @@ class ScoreKeeper(object):
     def is_max_score_reached(self):
         return np.max(self.scores) >= self.max_score
 
-    def check_for_goal(self):
+    def check_for_goal(self, num_paddles):
+        if num_paddles < 2:
+            return False
         ball_within_y_bounds = (self.goal_center - self.goal_size // 2 <=
                                self.ball.rect.y <=
                                self.goal_center + self.goal_size // 2 - self.ball.SIZE[1])
@@ -53,17 +59,21 @@ class ScoreKeeper(object):
         return scored
 
     def get_player_performances(self):
-        performances = self.passes[:]
 
-        # winner = self.get_winner()
-        # if winner == self.LEFT_WINNER_DECLARATION:
-        #     performances[0] += 10
-        # elif winner == self.RIGHT_WINNER_DECLARATION:
-        #     performances[1] += 10
-        #
-        # performances[0] += self.scores[0] * 2
-        # performances[1] += self.scores[1] * 2
-        return performances
+        if self.match_type == src.ml.match.Match.SOLO_PRACTICE or self.match_type == src.ml.match.Match.PASSING:
+            return self.passes[:]
+
+        else:
+            performances = self.passes[:]
+            winner = self.get_winner()
+            if winner == self.LEFT_WINNER_DECLARATION:
+                performances[0] += 10
+            elif winner == self.RIGHT_WINNER_DECLARATION:
+                performances[1] += 10
+
+            performances[0] += self.scores[0] * 2
+            performances[1] += self.scores[1] * 2
+            return performances
 
     def draw(self, window):
         top_left = (0, self.goal_center - self.goal_size // 2)

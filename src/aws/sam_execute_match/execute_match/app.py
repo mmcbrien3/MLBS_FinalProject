@@ -23,6 +23,7 @@ def lambda_handler(event, context):
         net_two = current_event['player_two']
         max_frames = current_event['max_frames']
         max_score = current_event['max_score']
+        match_type = current_event['match_type']
         left_uuid = current_event['left_uuid']
         right_uuid = current_event['right_uuid']
 
@@ -34,7 +35,7 @@ def lambda_handler(event, context):
 
         p_two = Network()
         p_two.set_save(net_two)
-        match = Match(max_frames, max_score)
+        match = Match(max_frames, max_score, match_type)
         match.add_players(p_one, p_two)
         match.execute_match()
 
