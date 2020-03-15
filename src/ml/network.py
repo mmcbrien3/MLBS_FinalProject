@@ -7,7 +7,7 @@ from uuid import uuid4
 class Network(object):
 
     LEFT_INPUTS = [pg.K_w, pg.K_a, pg.K_s, pg.K_d]
-    RIGHT_INPUTS = [pg.K_i, pg.K_j, pg.K_k, pg.K_l]
+    RIGHT_INPUTS = [pg.K_i, pg.K_l, pg.K_k, pg.K_j]
 
     def __init__(self):
         self.layers = []

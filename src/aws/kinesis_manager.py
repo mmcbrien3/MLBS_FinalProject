@@ -68,17 +68,15 @@ class KinesisManager(object):
     def _handle_single_record(self, record, output_dict):
         data = json.loads(record['Data'].decode('utf-8'))
 
-        if data['neural_nets_playing'][0]:
-            if data['left_uuid'] not in output_dict:
-                output_dict[data['left_uuid']] = data['performances'][0]
-            else:
-                output_dict[data['left_uuid']] += data['performances'][0]
+        if data['left_uuid'] not in output_dict:
+            output_dict[data['left_uuid']] = data['performances'][0]
+        else:
+            output_dict[data['left_uuid']] += data['performances'][0]
 
-        if data['neural_nets_playing'][1]:
-            if data['right_uuid'] not in output_dict:
-                output_dict[data['right_uuid']] = data['performances'][1]
-            else:
-                output_dict[data['right_uuid']] += data['performances'][1]
+        if data['right_uuid'] not in output_dict:
+            output_dict[data['right_uuid']] = data['performances'][1]
+        else:
+            output_dict[data['right_uuid']] += data['performances'][1]
 
         return output_dict
 

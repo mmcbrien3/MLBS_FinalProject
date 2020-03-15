@@ -19,16 +19,16 @@ class Match(object):
         self.game_controller = src.game.controller.Controller()
         self.game_controller.frame_rate = 9999
         self.match_type = match_type
-        self.neural_nets_playing = [True, True]
         self._set_up_controller()
+        self.both_performances = [0, 0]
 
-    def _set_up_controller(self):
+    def _set_up_controller(self, play_left_side=True):
         paddle_one = Paddle()
         paddle_two = Paddle()
         paddle_two.key_to_move_map = {pg.K_i: paddle_two._move_up,
-                                     pg.K_j: paddle_two._move_left,
+                                     pg.K_l: paddle_two._move_left,
                                      pg.K_k: paddle_two._move_down,
-                                     pg.K_l: paddle_two._move_right}
+                                     pg.K_j: paddle_two._move_right}
         paddle_two.set_starting_position((800, 200))
 
         self.game_controller.score_keeper.set_match_type(self.match_type)
@@ -36,13 +36,12 @@ class Match(object):
             ball = Ball()
             self.game_controller.add_game_objects(paddle_one, paddle_two, ball)
         else:
-            if random.random() < 0.5:
-                self.neural_nets_playing[1] = False
-                ball = Ball([random.randint(-5, 0), random.randint(-5, 5)])
+            random_y_speeds = [-10, -9, -8, -7, -6, -5, 5, 6, 7, 8, 9, 10]
+            if play_left_side:
+                ball = Ball([random.randint(-2, 0), random_y_speeds[random.randint(0, len(random_y_speeds)-1)]])
                 self.game_controller.add_game_objects(paddle_one, ball)
             else:
-                self.neural_nets_playing[0] = False
-                ball = Ball([random.randint(0, 5), random.randint(-5, 5)])
+                ball = Ball([random.randint(0, 5), random_y_speeds[random.randint(0, len(random_y_speeds)-1)]])
                 self.game_controller.add_game_objects(paddle_two, ball)
         self.game_controller.max_frames = self.max_frames
         self.game_controller.set_max_score(self.max_score)
@@ -52,13 +51,27 @@ class Match(object):
         self.left_neural_net = left_player
         self.right_neural_net = right_player
 
-        if self.neural_nets_playing[0]:
+        if self.match_type != self.SOLO_PRACTICE:
             self.game_controller.left_computer_player = self.left_neural_net
-        elif self.neural_nets_playing[1]:
             self.game_controller.right_computer_player = self.right_neural_net
 
     def execute_match(self):
-        self.game_controller.start_game()
+        if self.match_type == self.SOLO_PRACTICE:
+            self.game_controller = src.game.controller.Controller()
+            self._set_up_controller(play_left_side=True)
+            self.game_controller.left_computer_player = self.left_neural_net
+            self.game_controller.start_game()
+            self.both_performances[0] += self.game_controller.get_performances()[0]
+            self.game_controller = src.game.controller.Controller()
+            self._set_up_controller(play_left_side=False)
+            self.game_controller.right_computer_player = self.right_neural_net
+            self.game_controller.start_game()
+            self.both_performances[1] += self.game_controller.get_performances()[1]
+        else:
+            self.game_controller.start_game()
 
     def get_performances(self):
-        return self.game_controller.get_performances()
+        if self.match_type != self.SOLO_PRACTICE:
+            return self.game_controller.get_performances()
+        else:
+            return self.both_performances

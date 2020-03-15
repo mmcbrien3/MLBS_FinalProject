@@ -21,6 +21,7 @@ class BaseTournamentManager(object):
         self.max_generations = config['max_generations']
         self.max_frames = config['max_frames']
         self.max_score = config['max_score']
+        self.max_games_per_generation = config['max_games_per_generation']
 
         self.solo_generations = config['generation_match_types']['solo_generations']
         self.passing_generations_max = config['generation_match_types']['passing_generations'] + self.solo_generations
@@ -60,16 +61,17 @@ class BaseTournamentManager(object):
         print('Generation of {} matchups took {} seconds'.format(len(self.current_generation_matchups), time.time()-st))
 
     @staticmethod
-    def _score_function(games_played, games_won):
+    def _score_function(score, games_played):
         try:
-            return games_played / games_won
+            return score / games_played
         except ZeroDivisionError:
             return 0
 
     def calculate_and_submit_scores(self):
         for nn in self.neural_net_score_mapping:
             score = self.neural_net_score_mapping[nn]["score"]
-            self.evolution_controller.submit_network_and_score(nn, score)
+            games_played = self.neural_net_score_mapping[nn]["games_played"]
+            self.evolution_controller.submit_network_and_score(nn, self._score_function(score, games_played))
 
     def play_all_matchups(self):
         pass
@@ -78,6 +80,34 @@ class BaseTournamentManager(object):
         all_combinations = itertools.combinations(self.current_neural_nets, 2)
 
         self.current_generation_matchups = np.asarray(list(all_combinations))
+        if len(self.current_generation_matchups) < self.max_games_per_generation:
+            for nn in self.neural_net_score_mapping.keys():
+                self.neural_net_score_mapping[nn]['games_played'] = len(self.neural_net_score_mapping) - 1
+            return
+        else:
+            games = 0
+            games_per_neural_net = {}
+            random_games = []
+            for nn in self.current_neural_nets:
+                games_per_neural_net.update({nn: 0})
+            while games < self.max_games_per_generation:
+                for nn in self.current_neural_nets:
+                    selection = self.current_generation_matchups[
+                                np.random.choice(self.current_generation_matchups.shape[0]), :]
+                    while nn not in selection:
+                        selection = self.current_generation_matchups[
+                                    np.random.choice(self.current_generation_matchups.shape[0]), :]
+                    random_games.append(selection)
+                    games += 1
+                    if games >= self.max_games_per_generation:
+                        break
+            self.current_generation_matchups = random_games
+            for m in self.current_generation_matchups:
+                games_per_neural_net[m[0]] += 1
+                games_per_neural_net[m[1]] += 1
+            for nn, games in games_per_neural_net.items():
+                self.neural_net_score_mapping[nn]['games_played'] += 1
+                print("{} has {} games this generation".format(nn, games))
 
     def _play_game(self, neural_net_left, neural_net_right):
         match = src.ml.match.Match(self.max_frames, self.max_score, self.current_match_type)

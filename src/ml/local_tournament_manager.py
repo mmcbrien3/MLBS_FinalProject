@@ -8,12 +8,8 @@ class LocalTournamentManager(BaseTournamentManager):
         super().__init__(config)
 
     def play_all_matchups(self):
-        fraction_of_matchups = 1.0
-        matchup_indexes = np.random.choice(self.current_generation_matchups.shape[0],
-                                            round(self.current_generation_matchups.shape[0] //
-                                                  (1 / fraction_of_matchups)))
-        for idx in matchup_indexes:
-            matchup = self.current_generation_matchups[idx]
+
+        for matchup in self.current_generation_matchups:
             self.neural_net_score_mapping[matchup[0]]["games_played"] += 1
             self.neural_net_score_mapping[matchup[1]]["games_played"] += 1
 

@@ -43,7 +43,6 @@ def lambda_handler(event, context):
             'performances': match.get_performances(),
             'left_uuid': left_uuid,
             'right_uuid': right_uuid,
-            'neural_nets_playing': match.neural_nets_playing
         }
 
         put_record_result = kinesis_client.put_record(StreamName=stream_name,

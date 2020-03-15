@@ -112,32 +112,36 @@ class Controller(object):
     def get_neural_net_stimuli(self, side):
         right_paddle_position = None
         left_paddle_position = None
-        left_paddle = [o for o in self.game_objects if o.starting_position[0] < 500]
+        left_paddle = [o for o in self.game_objects if o.starting_position[0] < 500 and type(o) is Paddle]
         if len(left_paddle) > 0:
             left_paddle = left_paddle[0]
             left_paddle_position = [left_paddle.rect.x / self.dimensions[0], left_paddle.rect.y / self.dimensions[1]]
 
-        right_paddle = [o for o in self.game_objects if o.starting_position[0] > 500]
+        right_paddle = [o for o in self.game_objects if o.starting_position[0] > 500 and type(o) is Paddle]
         if len(right_paddle) > 0:
             right_paddle = right_paddle[0]
-            right_paddle_position = [right_paddle.rect.x / self.dimensions[0], right_paddle.rect.y / self.dimensions[1]]
+            right_paddle_position = [(1000 - right_paddle.rect.x) / self.dimensions[0], right_paddle.rect.y / self.dimensions[1]]
 
         ball = [o for o in self.game_objects if type(o) is Ball][0]
-        ball_position = (ball.rect.x / self.dimensions[0], ball.rect.y / self.dimensions[1])
+        if side == src.game.score_keeper.ScoreKeeper.LEFT_WINNER_DECLARATION:
+            ball_position = (ball.rect.x / self.dimensions[0], ball.rect.y / self.dimensions[1])
+        else:
+            x_ball = 1000 - ball.rect.x
+            ball_position = (x_ball / self.dimensions[0], ball.rect.y / self.dimensions[1])
         ball_velocity = np.asarray(ball.velocity) / 8
 
         if side == src.game.score_keeper.ScoreKeeper.LEFT_WINNER_DECLARATION and left_paddle_position is not None:
             relative_position = list(np.asarray(left_paddle_position) - np.asarray(ball_position))
             if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
-                return relative_position + [0, 0]
+                return [*relative_position, *[0, 0], *ball_velocity]
             else:
-                return relative_position + right_paddle_position
+                return [*relative_position, *right_paddle_position, *ball_velocity]
         elif side == src.game.score_keeper.ScoreKeeper.RIGHT_WINNER_DECLARATION and right_paddle_position is not None:
             relative_position = list(np.asarray(right_paddle_position) - np.asarray(ball_position))
             if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
-                return relative_position + [0, 0]
+                return [*relative_position, *[0, 0], *ball_velocity]
             else:
-                return relative_position + left_paddle_position
+                return [*relative_position, *left_paddle_position, *ball_velocity]
 
     def _should_draw(self):
         return not self.do_not_draw and (self.left_computer_player is None or self.right_computer_player is None)
