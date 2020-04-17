@@ -171,7 +171,7 @@ class Controller(object):
                 pg.time.Clock().tick(60)
             self.frames_expired += 1
             if self.frames_expired % 60 == 0:
-                print(self.frames_expired)
+                 pass # print(self.frames_expired)
 
 
         if self._should_draw():

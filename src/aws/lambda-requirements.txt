@@ -1,3 +1,5 @@
 pygame
 numpy
 boto3
+jsonpickle
+neat-python

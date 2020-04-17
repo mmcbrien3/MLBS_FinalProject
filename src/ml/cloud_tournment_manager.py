@@ -30,7 +30,7 @@ class CloudTournamentManager(BaseTournamentManager):
 
             for nn in self.neural_net_score_mapping.keys():
                 if nn.uuid == uuid:
-                    self.neural_net_score_mapping[nn]["score"] = score
+                    self.neural_net_score_mapping[nn]["score"] += score
                     break
 
         print(self.neural_net_score_mapping)

@@ -1,4 +1,5 @@
 from src.ml.neuro_evolution_controller import NeuroEvolutionController
+from src.ml.neat_controller import  NEATController
 import src.ml.match
 import numpy as np
 import time
@@ -15,6 +16,8 @@ class BaseTournamentManager(object):
                 config['mutation_rate'], config['mutation_range'], config['completely_new_rate'],
                 config['network_layers']
             )
+        elif config['genetic_algorithm'] == 'NEAT':
+            self.evolution_controller = NEATController(config, config['neat_config_file'])
         else:
             raise ValueError("Unrecognized type of genetic algorithm from config.")
 
@@ -44,6 +47,9 @@ class BaseTournamentManager(object):
         print("Next generation has match type {}".format(self.current_match_type))
 
     def run_for_max_generations(self):
+        if type(self.evolution_controller) is NEATController:
+            self.run_neat_generations()
+            return
         for i in range(self.max_generations):
             self.current_neural_nets = self.evolution_controller.increment_gen()
             for nn in self.current_neural_nets:
@@ -52,7 +58,10 @@ class BaseTournamentManager(object):
             self.update_current_match_type()
         self.evolution_controller.save_best_score()
 
-    def execute_generation(self):
+    def run_neat_generations(self):
+        self.evolution_controller.run_for_max_generations()
+
+    def execute_generation(self, genomes=None, config=None):
         st = time.time()
         self.create_matchups()
         self.play_all_matchups()

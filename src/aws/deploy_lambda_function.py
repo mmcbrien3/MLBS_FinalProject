@@ -12,7 +12,7 @@ def clear_old_code():
 def get_latest_code():
     game_required_files = None
     asset_required_files = None
-    ml_required_files = ['match.py', 'network.py', 'layer.py', 'neuron.py']
+    ml_required_files = ['match.py', 'network.py', 'neat_network.py', 'layer.py', 'neuron.py']
 
     sam_folder = os.path.join(os.path.dirname(__file__), 'sam_execute_match', 'execute_match')
     src_folder = os.path.join(os.path.dirname(__file__), os.pardir)

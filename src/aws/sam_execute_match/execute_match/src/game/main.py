@@ -11,7 +11,7 @@ from src.ml.network import Network
 def get_computer_player():
     neural_net_folder = os.path.join(os.getcwd(), os.pardir, "ml", "neural_nets")
     files = sorted(os.listdir(neural_net_folder), key=lambda s: int(s[s.index("_")+1:]))
-    with open(os.path.join(neural_net_folder, "Gen_78"), "rb") as file:
+    with open(os.path.join(neural_net_folder, "Gen_357"), "rb") as file:
         return pickle.load(file)
 
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
                                 pg.K_l: paddleTwo._move_right}
     paddleTwo.set_starting_position((800, 200))
 
-    ball = Ball([-4, -5])
+    ball = Ball([-4, 5])
     controller = Controller()
     controller.add_game_objects(paddleOne, paddleTwo, ball)
 

@@ -1,5 +1,6 @@
 from src.ml.match import Match
 from src.ml.network import Network
+from src.ml.neat_network import NEATNetwork
 import boto3
 import json
 
@@ -30,10 +31,17 @@ def lambda_handler(event, context):
         stream_name = current_event['stream_name']
         kinesis_client = boto3.client('kinesis')
 
-        p_one = Network()
+        p_one = None
+        p_two = None
+        if current_event['network_type'] == 'neat':
+            p_one = NEATNetwork()
+            p_two = NEATNetwork()
+        else:
+            p_one = Network()
+            p_two = Network()
+
         p_one.set_save(net_one)
 
-        p_two = Network()
         p_two.set_save(net_two)
         match = Match(max_frames, max_score, match_type)
         match.add_players(p_one, p_two)

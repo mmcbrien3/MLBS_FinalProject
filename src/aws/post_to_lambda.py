@@ -11,7 +11,7 @@ api_url = "https://g9sjqvnoql.execute-api.us-east-1.amazonaws.com/Prod/execute_m
 def create_lambda_event(left_network, right_network,
                         left_uuid, right_uuid,
                         stream_name, match_type,
-                        max_frames=60*2.5, max_score=1):
+                        max_frames=60*2.5, max_score=1, network_type='ne'):
     lambda_event = {"max_frames": max_frames, "max_score": max_score}
 
     lambda_event.update({'player_one': left_network})
@@ -20,6 +20,7 @@ def create_lambda_event(left_network, right_network,
     lambda_event.update({'right_uuid': right_uuid})
     lambda_event.update({'stream_name': stream_name})
     lambda_event.update({'match_type': match_type})
+    lambda_event.update({'network_type': network_type})
     return json.dumps(lambda_event)
 
 
