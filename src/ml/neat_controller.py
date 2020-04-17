@@ -31,9 +31,10 @@ class NEATController(src.ml.base_controller.BaseController):
         self.play_in_cloud = ml_config['run_in_cloud']
         self.solo_generations = ml_config['generation_match_types']['solo_generations']
         self.passing_generations_max = ml_config['generation_match_types']['passing_generations']
+        self.max_generations = ml_config['max_generations']
 
     def run_for_max_generations(self):
-        winner = self.population.run(self.evaluate_genomes, 100)
+        winner = self.population.run(self.evaluate_genomes, self.max_generations)
 
     def evaluate_genomes(self, genomes, config):
         self.cur_gen += 1
@@ -46,6 +47,7 @@ class NEATController(src.ml.base_controller.BaseController):
         self.execute_generation()
         self.update_current_match_type()
         self.save_best_genome()
+        print("Completed generation #{}".format(self.cur_gen))
 
     def save_best_genome(self):
         max_fitness = -1

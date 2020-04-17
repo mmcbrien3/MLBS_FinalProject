@@ -25,7 +25,7 @@ def get_computer_player(computer_gen, play_against_neat):
 if __name__ == "__main__":
     play_against_computer = True
     play_against_neat = True
-    computer_gen = 100
+    computer_gen = 407
     paddleOne = Paddle()
     paddleTwo = Paddle()
     paddleTwo.key_to_move_map = {pg.K_i: paddleTwo._move_up,
@@ -34,7 +34,7 @@ if __name__ == "__main__":
                                 pg.K_l: paddleTwo._move_right}
     paddleTwo.set_starting_position((800, 200))
 
-    ball = Ball([-4, 5])
+    ball = Ball()
     controller = Controller()
     controller.add_game_objects(paddleOne, paddleTwo, ball)
 
@@ -52,5 +52,6 @@ if __name__ == "__main__":
             computer_network = Network()
             computer_network.set_save(network_dict)
         controller.right_computer_player = computer_network
+        controller.left_computer_player = computer_network
         controller.score_keeper.match_type = src.ml.match.Match.SOLO_PRACTICE
     controller.start_game()

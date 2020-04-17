@@ -61,17 +61,17 @@ def deploy_with_sam():
     AWS_REGION = "us-east-1"
     BASE_PATH = os.path.join(os.path.dirname(__file__), 'sam_execute_match')
     STACK_NAME = "execute-match"
-    BUILD_DIR = "%s/%s" % (BASE_PATH, "build_artifact")
+    BUILD_DIR = os.path.join(BASE_PATH, 'build_artifact')
 
     if not os.path.exists(BUILD_DIR):
         os.mkdir(BUILD_DIR)
 
-    os.system("cd %s && sam build --template template.yaml --build-dir %s" % (BASE_PATH, BUILD_DIR))
+    os.system("cd \"%s\" && sam build --template template.yaml --build-dir \"%s\"" % (BASE_PATH, BUILD_DIR))
     os.system(
-        "cd %s && sam package --template-file %s/template.yaml --output-template-file packaged.yaml --s3-bucket %s" % (
+        "cd \"%s\" && sam package --template-file \"%s/template.yaml\" --output-template-file packaged.yaml --s3-bucket \"%s\"" % (
         BASE_PATH, BUILD_DIR, LAMBDA_S3_BUCKET))
     os.system(
-        "cd %s && sam deploy  --template-file packaged.yaml --stack-name %s --capabilities CAPABILITY_IAM --region %s" % (
+        "cd \"%s\" && sam deploy  --template-file packaged.yaml --stack-name %s --capabilities CAPABILITY_IAM --region %s" % (
         BASE_PATH, STACK_NAME, AWS_REGION))
 
 
