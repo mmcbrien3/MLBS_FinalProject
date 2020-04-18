@@ -64,7 +64,7 @@ class KinesisManager(object):
                     print('terminating early due to no recent records')
                     break
 
-                if total_iterations > 20 and not any_records_received:
+                if total_iterations > 40 and not any_records_received:
                     return None
 
                 total_iterations += 1

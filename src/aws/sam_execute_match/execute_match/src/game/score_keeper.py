@@ -62,12 +62,15 @@ class ScoreKeeper(object):
             return self.paddle_hits[:]
 
         elif self.match_type == src.ml.match.Match.PASSING:
-            return list(2 * np.asarray(self.passes[:]) + self.paddle_hits[:])
+            performances = 2 * np.asarray(self.passes) + self.paddle_hits
+            performances = [int(p) for p in performances]
+            return performances
         else:
-            performances = list(2 * np.asarray(self.passes[:]) + self.paddle_hits[:])
+            performances = 2 * np.asarray(self.passes) + self.paddle_hits
 
             performances[0] -= self.scores[1] * 5
             performances[1] -= self.scores[0] * 5
+            performances = [int(p) for p in performances]
             return performances
 
     def draw(self, window):

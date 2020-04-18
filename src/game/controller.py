@@ -144,7 +144,7 @@ class Controller(object):
             return [*right_paddle_position, *ball_position, *left_paddle_position, *ball_velocity]
 
     def _should_draw(self):
-        return True #not self.do_not_draw and (self.left_computer_player is None or self.right_computer_player is None)
+        return not self.do_not_draw and (self.left_computer_player is None or self.right_computer_player is None)
 
     def start_game(self):
         if self._should_draw():
