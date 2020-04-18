@@ -2,7 +2,8 @@ import boto3
 import json
 import uuid
 import time
-import src.ml.match
+import botocore.errorfactory
+
 
 class KinesisManager(object):
 
@@ -11,6 +12,9 @@ class KinesisManager(object):
         self.client = boto3.client('kinesis')
         self.stream_name = None
         self.shard_iterator = None
+        self.last_sequence = None
+        self.total_calls_to_stream = 0
+
 
     def create_stream(self, stream_name, shard_count=1):
         self.stream_name = stream_name + str(uuid.uuid4())
@@ -29,33 +33,50 @@ class KinesisManager(object):
 
     def read_next_n_records(self, n):
 
+        self.total_calls_to_stream += 1
+
         output_dict = {}
         records_read = 0
         any_records_received = False
         iterations_since_last_received = 0
+        total_iterations = 0
         while records_read < n:
-            get_records_response = self.client.get_records(ShardIterator=self.shard_iterator, Limit=5000)
-            records = get_records_response['Records']
+            try:
+                get_records_response = self.client.get_records(ShardIterator=self.shard_iterator, Limit=1000)
+                records = get_records_response['Records']
 
-            self.shard_iterator = get_records_response['NextShardIterator'] \
-                if len(records) > 0 else self.shard_iterator
+                self.shard_iterator = get_records_response['NextShardIterator'] \
+                    if len(records) > 0 else self.shard_iterator
 
-            output_dict = self._handle_records(records, output_dict)
+                output_dict = self._handle_records(records, output_dict)
 
-            records_read += len(records)
+                records_read += len(records)
 
-            if len(records) > 0:
-                print('Read {} records from kinesis...'.format(records_read))
-                any_records_received = True
-                iterations_since_last_received = 0
-            else:
-                iterations_since_last_received += 1
+                if len(records) > 0:
+                    print('Read {} records from kinesis...'.format(records_read))
+                    any_records_received = True
+                    iterations_since_last_received = 0
+                    self.last_sequence = records[-1]['SequenceNumber']
+                else:
+                    iterations_since_last_received += 1
 
-            if any_records_received and iterations_since_last_received > 4:
-                print('terminating early due to no recent records')
-                break
+                if any_records_received and iterations_since_last_received > 4:
+                    print('terminating early due to no recent records')
+                    break
 
-            time.sleep(0.25)
+                if total_iterations > 20 and not any_records_received:
+                    return None
+
+                total_iterations += 1
+                time.sleep(0.33)
+            except:
+                self.shard_iterator = self.client.get_shard_iterator(StreamName=self.stream_name,
+                                                                     ShardId=self._get_shard_id(),
+                                                                     ShardIteratorType="LATEST")
+
+        if self.total_calls_to_stream > 200:
+            self.total_calls_to_stream = 0
+            self.create_stream(self.stream_name[0:10])
 
         return output_dict
 

@@ -92,6 +92,9 @@ class NEATController(src.ml.base_controller.BaseController):
                                                                      network_type='neat'))
 
         output_dict = post_to_lambda.run_generation(lambda_matches, self.kinesis_manager)
+        if output_dict is None or len(output_dict) < .85 * len(self.current_generation_matchups):
+            self.play_all_matchups_in_cloud()
+            return
         for uuid, score in output_dict.items():
 
             for nn in self.neural_net_score_mapping.keys():
