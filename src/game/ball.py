@@ -79,4 +79,7 @@ class Ball(BaseObject):
                             obj.rect.y,
                             obj.SIZE)
                 paddles_hit.append(obj)
+                if self._check_on_boundary(self.rect.x, self.rect.y):
+                    self.velocity = [np.random.choice((-1, 1)) * 20,
+                                     np.random.choice((-1, 1)) * 20]
         return paddles_hit

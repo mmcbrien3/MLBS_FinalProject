@@ -53,7 +53,12 @@ class Controller(object):
 
         [o.update() for o in self.game_objects]
         if self.score_keeper.check_for_goal(self.num_paddles):
-            [o.reset_to_starting_position() for o in self.game_objects]
+
+            if self.score_keeper.match_type != src.ml.match.Match.PASSING and \
+                    self.score_keeper.match_type != src.ml.match.Match.SOLO_PRACTICE:
+                [o.reset_to_starting_position() for o in self.game_objects]
+            else:
+                self.score_keeper.scores = [0, 0]
 
         for o in balls:
             if o.rect.x > 500 and cur_ball_pos < 500:
@@ -125,23 +130,18 @@ class Controller(object):
         ball = [o for o in self.game_objects if type(o) is Ball][0]
         if side == src.game.score_keeper.ScoreKeeper.LEFT_WINNER_DECLARATION:
             ball_position = (ball.rect.x / self.dimensions[0], ball.rect.y / self.dimensions[1])
+            ball_velocity = np.asarray(ball.velocity) / 8
+
         else:
             x_ball = 1000 - ball.rect.x
             ball_position = (x_ball / self.dimensions[0], ball.rect.y / self.dimensions[1])
-        ball_velocity = np.asarray(ball.velocity) / 8
+            ball_velocity = np.asarray(ball.velocity) / 8
+            ball_velocity[0] *= -1
 
         if side == src.game.score_keeper.ScoreKeeper.LEFT_WINNER_DECLARATION and left_paddle_position is not None:
-            relative_position = list(np.asarray(left_paddle_position) - np.asarray(ball_position))
-            if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
-                return [*relative_position, *[0, 0], *ball_velocity]
-            else:
-                return [*relative_position, *right_paddle_position, *ball_velocity]
+            return [*left_paddle_position, *ball_position, *right_paddle_position, *ball_velocity]
         elif side == src.game.score_keeper.ScoreKeeper.RIGHT_WINNER_DECLARATION and right_paddle_position is not None:
-            relative_position = list(np.asarray(right_paddle_position) - np.asarray(ball_position))
-            if self.score_keeper.match_type == src.ml.match.Match.SOLO_PRACTICE:
-                return [*relative_position, *[0, 0], *ball_velocity]
-            else:
-                return [*relative_position, *left_paddle_position, *ball_velocity]
+            return [*right_paddle_position, *ball_position, *left_paddle_position, *ball_velocity]
 
     def _should_draw(self):
         return not self.do_not_draw and (self.left_computer_player is None or self.right_computer_player is None)

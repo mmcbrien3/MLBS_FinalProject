@@ -57,7 +57,7 @@ class NEATController(src.ml.base_controller.BaseController):
                 max_fitness = g[1].fitness
                 max_g = g[1]
 
-        with open(os.path.join('neat_nets', 'neat_gen_{}'.format(self.cur_gen)), 'wb') as f:
+        with open(os.path.join('neat_nets_2', 'neat_gen_{}'.format(self.cur_gen)), 'wb') as f:
             pickle.dump(max_g, f)
 
     def execute_generation(self):
@@ -105,7 +105,7 @@ class NEATController(src.ml.base_controller.BaseController):
 
         for matchup in self.current_generation_matchups:
 
-            performances = self._play_game(matchup[0][1], matchup[1][1])
+            performances = self._play_game(matchup[0], matchup[1])
 
             self.neural_net_score_mapping[matchup[0]]["score"] += performances[0]
             self.neural_net_score_mapping[matchup[1]]["score"] += performances[1]

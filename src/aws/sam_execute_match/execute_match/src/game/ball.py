@@ -15,7 +15,8 @@ class Ball(BaseObject):
         self.starting_position = (500 - self.SIZE[0] // 2, 300 - self.SIZE[1] // 2)
         self.rect.x = self.starting_position[0]
         self.rect.y = self.starting_position[1]
-        self.deceleration = .01
+        self.deceleration = .02
+        self.max_speed = 12
         self.forced_starting_velocity = forced_starting_velocity
         self.velocity = self._make_random_starting_velocity()
 
@@ -62,7 +63,7 @@ class Ball(BaseObject):
             self.bounce((0, 0), bounce_type, None, None, None)
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
-        self.velocity = [np.sign(v) * np.max((0, np.abs(v) - self.deceleration)) for v in self.velocity]
+        self.velocity = [np.sign(v) * np.min((self.max_speed, np.max((0, np.abs(v) - self.deceleration)))) for v in self.velocity]
 
     def check_for_bounces(self, objects):
         paddles_hit = []
@@ -78,4 +79,7 @@ class Ball(BaseObject):
                             obj.rect.y,
                             obj.SIZE)
                 paddles_hit.append(obj)
+                if self._check_on_boundary(self.rect.x, self.rect.y):
+                    self.velocity = [np.random.choice((-1, 1)) * 20,
+                                     np.random.choice((-1, 1)) * 20]
         return paddles_hit

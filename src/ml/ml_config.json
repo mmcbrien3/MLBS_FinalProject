@@ -9,13 +9,13 @@
     "network_layers": [8, [], 4],
     "run_in_cloud": true,
     "max_generations": 2000,
-    "max_frames": 450,
+    "max_frames": 600,
     "generation_match_types":
     {
-        "solo_generations": 50,
-        "passing_generations": 100
+        "solo_generations": 400,
+        "passing_generations": 800
     },
-    "max_score": 2,
+    "max_score": 4,
     "genetic_algorithm": "NEAT",
     "neat_config_file": "./neat_config.config"
 }

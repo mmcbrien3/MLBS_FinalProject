@@ -50,29 +50,24 @@ class ScoreKeeper(object):
         if ball_scores_on_left:
             self.scores[1] += 1
             scored = True
-            print(self.scores)
         elif ball_scores_on_right:
             self.scores[0] += 1
             scored = True
-            print(self.scores)
 
         return scored
 
     def get_player_performances(self):
 
-        if self.match_type == src.ml.match.Match.SOLO_PRACTICE or self.match_type == src.ml.match.Match.PASSING:
-            return self.passes[:]
+        if self.match_type == src.ml.match.Match.SOLO_PRACTICE:
+            return self.paddle_hits[:]
 
+        elif self.match_type == src.ml.match.Match.PASSING:
+            return list(2 * np.asarray(self.passes[:]) + self.paddle_hits[:])
         else:
-            performances = self.passes[:]
-            winner = self.get_winner()
-            if winner == self.LEFT_WINNER_DECLARATION:
-                performances[0] += 10
-            elif winner == self.RIGHT_WINNER_DECLARATION:
-                performances[1] += 10
+            performances = list(2 * np.asarray(self.passes[:]) + self.paddle_hits[:])
 
-            performances[0] += self.scores[0] * 2
-            performances[1] += self.scores[1] * 2
+            performances[0] -= self.scores[1] * 5
+            performances[1] -= self.scores[0] * 5
             return performances
 
     def draw(self, window):
