@@ -35,7 +35,7 @@ class KinesisManager(object):
 
         self.total_calls_to_stream += 1
 
-        output_dict = {}
+        output_dict = {"total_records": 0}
         records_read = 0
         any_records_received = False
         iterations_since_last_received = 0
@@ -54,6 +54,7 @@ class KinesisManager(object):
 
                 if len(records) > 0:
                     print('Read {} records from kinesis...'.format(records_read))
+                    output_dict['total_records'] = records_read
                     any_records_received = True
                     iterations_since_last_received = 0
                     self.last_sequence = records[-1]['SequenceNumber']

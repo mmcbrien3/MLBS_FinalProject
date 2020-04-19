@@ -101,6 +101,7 @@ class Controller(object):
         balls = [o for o in self.game_objects if type(o) is Ball]
         not_balls = [o for o in self.game_objects if type(o) is not Ball]
 
+        self.get_performances()
         paddles_hit = [ball.check_for_bounces(not_balls) for ball in balls][0]
         for p in paddles_hit:
             if p.starting_position[0] < 500:
@@ -112,7 +113,9 @@ class Controller(object):
         return self.score_keeper.get_winner()
 
     def get_performances(self):
-        return self.score_keeper.get_player_performances()
+        paddles = [o for o in self.game_objects if type(o) is Paddle]
+        paddle_not_moving = [p.total_frames_not_moving for p in paddles]
+        return self.score_keeper.get_player_performances(paddle_not_moving)
 
     def get_neural_net_stimuli(self, side):
         right_paddle_position = None

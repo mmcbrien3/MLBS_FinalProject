@@ -15,6 +15,9 @@ class Paddle(BaseObject):
         self.starting_position = (200, 200)
         self.rect.x = self.starting_position[0]
         self.rect.y = self.starting_position[1]
+        self.previous_position = [self.rect.x, self.rect.y]
+        self.frames_not_moving = 0
+        self.total_frames_not_moving = 0
         self.speed = [0, 0]
         self.max_speed = 10
         self.acceleration = 1
@@ -33,8 +36,17 @@ class Paddle(BaseObject):
         self.speed = [np.sign(sp) * np.max((0, np.abs(sp) - self.deceleration)) for sp in self.speed]
         self.velocity = [sp for sp in self.speed]
         cur_position = [self.rect.x, self.rect.y]
+        self.previous_position = [self.rect.x, self.rect.y]
         self._move(self.velocity[0], self.velocity[1])
 
+        magnitude_of_move = np.sum(np.abs(np.asarray(self.previous_position) - np.asarray([self.rect.x, self.rect.y])))
+        if magnitude_of_move < 2:
+            self.frames_not_moving += 1
+        else:
+            self.frames_not_moving = 0
+        if self.frames_not_moving > 5:
+            self.total_frames_not_moving += 1
+            self.frames_not_moving = 0
         if cur_position == [self.rect.x, self.rect.y]:
             self.velocity = [0, 0]
 

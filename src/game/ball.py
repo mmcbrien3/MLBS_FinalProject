@@ -19,6 +19,7 @@ class Ball(BaseObject):
         self.max_speed = 12
         self.forced_starting_velocity = forced_starting_velocity
         self.velocity = self._make_random_starting_velocity()
+        self.frames_without_moving = 0
 
     def reset_to_starting_position(self):
         super().reset_to_starting_position()
@@ -27,8 +28,8 @@ class Ball(BaseObject):
     def _make_random_starting_velocity(self):
         if self.forced_starting_velocity is not None:
             return self.forced_starting_velocity
-        initial_velocity = np.random.randint(-8, 8)
-        return [np.random.choice([-3, 3]), np.sign(initial_velocity + 0.1) * np.max((3, np.abs(initial_velocity)))]
+        initial_velocity = np.random.randint(-10, 10)
+        return [np.random.choice([-8, 8]), np.sign(initial_velocity + 0.1) * np.max((8, np.abs(initial_velocity)))]
 
     def bounce(self, collider_velocity, type, other_x, other_y, other_size):
         dx = 1.2 * collider_velocity[0]
@@ -64,6 +65,12 @@ class Ball(BaseObject):
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
         self.velocity = [np.sign(v) * np.min((self.max_speed, np.max((0, np.abs(v) - self.deceleration)))) for v in self.velocity]
+        if self.velocity[0] == 0 and self.velocity[1] == 0:
+            self.frames_without_moving += 1
+
+        if self.frames_without_moving > 60:
+            self.reset_to_starting_position()
+            self.frames_without_moving = 0
 
     def check_for_bounces(self, objects):
         paddles_hit = []

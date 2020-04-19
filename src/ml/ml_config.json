@@ -12,8 +12,8 @@
     "max_frames": 450,
     "generation_match_types":
     {
-        "solo_generations": 0,
-        "passing_generations": 10
+        "solo_generations": 300,
+        "passing_generations":600
     },
     "max_score": 4,
     "genetic_algorithm": "NEAT",
