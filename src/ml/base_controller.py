@@ -50,8 +50,8 @@ class BaseController(object):
     def save_best_score(self, frame_score=None, count=None):
         if len(self.generations.generations) == 0:
             return
-        best_score_in_gen = -1
-        best_in_gen = None
+        best_score_in_gen = self.generations.generations[0].genomes[0].score
+        best_in_gen = self.generations.generations[0].genomes[0]
         if not frame_score:
             for g in self.generations.generations[0].genomes:
                 if g.score > best_score_in_gen:

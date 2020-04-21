@@ -35,7 +35,7 @@ class NEATController(src.ml.base_controller.BaseController):
         self.checkpointer = neat.Checkpointer(generation_interval=2)
         checkpoint_filename_prefix = os.path.join('neat_checkpoints', 'neat_checkpoint_number')
         self.checkpointer.filename_prefix = checkpoint_filename_prefix
-        self.checkpoint_to_start_at = os.path.join('neat_checkpoints', 'neat_checkpoint_number7')
+        self.checkpoint_to_start_at = os.path.join('neat_checkpoint_number401')
 
     def run_for_max_generations(self):
         if self.checkpoint_to_start_at is not None:
@@ -59,8 +59,8 @@ class NEATController(src.ml.base_controller.BaseController):
         print("Completed generation #{} in {} seconds".format(self.cur_gen, time.time() - st))
 
     def save_best_genome(self):
-        max_fitness = -1
-        max_g = None
+        max_fitness = self.genomes[0][1].fitness
+        max_g = self.genomes[0][1]
         for g in self.genomes:
             if g[1].fitness > max_fitness:
                 max_fitness = g[1].fitness

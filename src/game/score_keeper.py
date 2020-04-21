@@ -59,23 +59,22 @@ class ScoreKeeper(object):
     def get_player_performances(self, frames_not_moving_list):
 
         if self.match_type == src.ml.match.Match.SOLO_PRACTICE:
-            performances = np.asarray(self.paddle_hits) - .2 * np.asarray(frames_not_moving_list)
+            performances = 0.5 * np.asarray(self.paddle_hits) - .2 * np.asarray(frames_not_moving_list)
 
             performances = [int(p) for p in performances]
             return performances
 
         elif self.match_type == src.ml.match.Match.PASSING:
-            performances = 2 * np.asarray(self.passes) + self.paddle_hits - .2 * np.asarray(frames_not_moving_list)
+            performances = 2 * np.asarray(self.passes) + 0.5 * np.asarray(self.paddle_hits) - .2 * np.asarray(frames_not_moving_list)
 
             performances = [int(p) for p in performances]
             return performances
         else:
-            performances = 1 * np.asarray(self.passes) - .2 * np.asarray(frames_not_moving_list)
-
-            performances[0] -= self.scores[1] * 5
-            performances[1] -= self.scores[0] * 5
-            performances[0] += self.scores[0] * 3
-            performances[1] += self.scores[1] * 3
+            performances = 2 * np.asarray(self.passes) + 0.5 * np.asarray(self.paddle_hits) - .5 * np.asarray(frames_not_moving_list)
+            performances[0] -= self.scores[1] * 10
+            performances[1] -= self.scores[0] * 10
+            performances[0] += self.scores[0] * 5
+            performances[1] += self.scores[1] * 5
             performances = [int(p) for p in performances]
             return performances
 

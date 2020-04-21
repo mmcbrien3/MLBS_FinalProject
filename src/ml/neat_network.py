@@ -10,7 +10,10 @@ class NEATNetwork(src.ml.network.Network):
         self.genome = None
 
     def compute(self, inputs):
-        return self.network.activate(inputs)
+        try:
+            return self.network.activate(inputs)
+        except:
+            return [0, 0, 0, 0]
 
     def set_save(self, save):
         self.network = jsonpickle.loads(save)

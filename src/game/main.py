@@ -28,7 +28,7 @@ def get_computer_player(computer_gen, play_against_neat):
 if __name__ == "__main__":
     play_against_computer = True
     play_against_neat = True
-    computer_gen = 1
+    computer_gen = 300
 
     if play_against_computer:
         network_dict = get_computer_player(computer_gen, play_against_neat)
@@ -44,7 +44,7 @@ if __name__ == "__main__":
             computer_network = Network()
             computer_network.set_save(network_dict)
 
-    computer_gen = 700
+    computer_gen = 167
 
     if play_against_computer:
         network_dict = get_computer_player(computer_gen, play_against_neat)
